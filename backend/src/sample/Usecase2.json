@@ -1,0 +1,741 @@
+{
+  "questionnaire": {
+    "Functional": [
+      {
+        "question": "How many job sites and warehouses are in scope today and over the next 12–24 months, and where are they located?",
+        "why_it_matters": "Determines multi-site configuration, data partitioning, network considerations, and scale of rollout.",
+        "priority": "High",
+        "risk_if_unanswered": "Underestimation of scope leading to performance issues and a rollout plan that does not fit growth."
+      },
+      {
+        "question": "Which inventory processes must be supported end-to-end (receiving, issues to job/cost code, transfers between sites, returns, adjustments, cycle counts, kitting/BOMs, staging/reservations)?",
+        "why_it_matters": "Defines workflow design, permissions, and data model including reservations and WIP handling.",
+        "priority": "High",
+        "risk_if_unanswered": "Gaps in operational coverage and rework to add missing flows later."
+      },
+      {
+        "question": "What are the offline requirements (duration expected offline, critical transactions offline, conflict resolution rules, sync frequency, size limits)?",
+        "why_it_matters": "Drives the offline-first architecture, caching, and sync conflict handling design.",
+        "priority": "High",
+        "risk_if_unanswered": "Field users blocked in low-connectivity areas; potential data loss or duplication."
+      },
+      {
+        "question": "Which mobile platforms and devices are approved (iOS/Android, versions) and what rugged scanners or camera-based scanning will be used?",
+        "why_it_matters": "Impacts app delivery approach, SDKs for scanning, and device-specific optimization.",
+        "priority": "High",
+        "risk_if_unanswered": "Incompatibilities with hardware and poor scanning performance in the field."
+      },
+      {
+        "question": "What barcode/QR standards and symbologies are required (e.g., GS1-128, Code 128, QR), and are there label printing needs (on-site printers, label sizes, templates)?",
+        "why_it_matters": "Affects scanning accuracy, parsing logic (GS1 AIs), and label printing integrations.",
+        "priority": "High",
+        "risk_if_unanswered": "Scanning errors and labeling bottlenecks that slow field operations."
+      },
+      {
+        "question": "Describe procurement workflows (requisition to PO, approvals and thresholds, min/max or reorder points, vendor catalogs/pricing, blanket POs, three-way match).",
+        "why_it_matters": "Determines automation rules, approval routing, and integration points with ERP/AP.",
+        "priority": "High",
+        "risk_if_unanswered": "Broken or manual procurement steps and compliance exposure."
+      },
+      {
+        "question": "What is the scope of supplier management (onboarding, compliance documents, lead times/MOQs, performance scorecards, contract management)?",
+        "why_it_matters": "Defines required supplier data model and KPIs for vendor performance.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Limited visibility into supplier risk and performance; missed savings."
+      },
+      {
+        "question": "How do you allocate material costs (by job, phase, cost code, asset), and are there budget validations at issue time?",
+        "why_it_matters": "Ensures correct posting rules and controls for cost management.",
+        "priority": "High",
+        "risk_if_unanswered": "Misstated job costs and downstream accounting discrepancies."
+      },
+      {
+        "question": "Are lot/batch/serial tracking or expiration/shelf-life controls required for any materials?",
+        "why_it_matters": "Impacts item master design, transaction capture, and valuation.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Inability to trace materials or comply with quality requirements."
+      },
+      {
+        "question": "Do you need photo/document attachments during transactions (e.g., receiving damages, wastage evidence, delivery dockets)?",
+        "why_it_matters": "Affects storage, UX design, and mobile capabilities.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Lost evidence for disputes and weaker auditability."
+      },
+      {
+        "question": "Will the system operate across multiple business units or legal entities and currencies?",
+        "why_it_matters": "Determines multi-entity configuration, data segregation, and financial controls.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Data leakage between entities and incorrect financial reporting."
+      },
+      {
+        "question": "What are the priority KPIs for dashboards (e.g., usage variance by job, wastage %, stockouts, supplier OTIF, forecast accuracy) and reporting cadence/export formats?",
+        "why_it_matters": "Guides analytics design and selection of visualization components.",
+        "priority": "High",
+        "risk_if_unanswered": "Dashboards that do not inform decisions or meet leadership needs."
+      }
+    ],
+    "Technical": [
+      {
+        "question": "Which ERP and accounting systems (name/version) are in scope, and what integration methods are available (APIs, iPaaS/middleware, SFTP/file exchange, EDI)?",
+        "why_it_matters": "Determines integration architecture, effort, and error-handling approach.",
+        "priority": "High",
+        "risk_if_unanswered": "Integration delays, unreliable sync, and manual workarounds."
+      },
+      {
+        "question": "What master and transactional data flows are required bi-directionally (items, suppliers, POs, receipts, issues, GL postings), and what is the required sync frequency/latency?",
+        "why_it_matters": "Defines data contracts and ensures real-time visibility targets are met.",
+        "priority": "High",
+        "risk_if_unanswered": "Data inconsistencies and delayed decision-making."
+      },
+      {
+        "question": "Preferred cloud provider/regions and any networking constraints (VPC peering, VPN, IP allowlists, PrivateLink)?",
+        "why_it_matters": "Impacts deployment topology, security posture, and latency.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Non-compliant hosting or degraded performance."
+      },
+      {
+        "question": "Do you require SSO/MFA and which IdP is used (Azure AD, Okta, Google, others)? Any SCIM provisioning needs?",
+        "why_it_matters": "Affects authentication integration and user lifecycle management.",
+        "priority": "High",
+        "risk_if_unanswered": "Weaker security and manual user management overhead."
+      },
+      {
+        "question": "What are the performance and availability targets (peak concurrent users, transactions per minute, response time SLAs, uptime %, RTO/RPO, DR requirements)?",
+        "why_it_matters": "Sets non-functional benchmarks and capacity planning.",
+        "priority": "High",
+        "risk_if_unanswered": "System instability under load and extended outages."
+      },
+      {
+        "question": "What is the environment strategy (dev/test/stage/prod) and CI/CD expectations for releases?",
+        "why_it_matters": "Determines delivery pipeline and change risk controls.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Release bottlenecks or production incidents due to weak controls."
+      },
+      {
+        "question": "Are there mobile device management (MDM) policies, minimum OS versions, and app distribution constraints?",
+        "why_it_matters": "Impacts mobile deployment, updates, and security controls.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Inconsistent app availability and security gaps on devices."
+      },
+      {
+        "question": "What label printing technologies are in use (Zebra/ZPL, Bluetooth/Wi-Fi printers), and do you require on-device printing from mobile?",
+        "why_it_matters": "Guides print service integrations and drivers.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Inability to print labels at point of use."
+      },
+      {
+        "question": "Do you require telemetry/logging integration with your SIEM (Splunk, Sentinel) and specific audit export formats?",
+        "why_it_matters": "Ensures auditability and centralized monitoring.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Limited visibility into incidents and compliance gaps."
+      },
+      {
+        "question": "Any requirements for IoT/RFID/BLE tracking for high-value assets or materials in the future?",
+        "why_it_matters": "Influences extensibility and hardware roadmap.",
+        "priority": "Low",
+        "risk_if_unanswered": "Retrofitting costs if advanced tracking is later required."
+      }
+    ],
+    "Design_UX": [
+      {
+        "question": "Who are the primary personas (warehouse clerk, site foreman, project manager, buyer) and their top 3 tasks per persona?",
+        "why_it_matters": "Enables persona-driven flows and minimizes clicks for frequent tasks.",
+        "priority": "High",
+        "risk_if_unanswered": "Cluttered UX that slows adoption and increases training needs."
+      },
+      {
+        "question": "What are the scanning ergonomics needs (glove use, outdoor/bright sun, one-hand operation, large buttons, haptic feedback)?",
+        "why_it_matters": "Optimizes mobile UI for field conditions and safety.",
+        "priority": "Medium",
+        "risk_if_unanswered": "User frustration and slow transactions in the field."
+      },
+      {
+        "question": "How should offline state and sync conflicts be presented to users (indicators, queue view, manual vs auto-resolve)?",
+        "why_it_matters": "Improves trust in offline mode and reduces errors.",
+        "priority": "High",
+        "risk_if_unanswered": "Hidden data conflicts and loss of user confidence."
+      },
+      {
+        "question": "Any localization needs (languages, units of measure, date/time formats, currencies) across sites?",
+        "why_it_matters": "Ensures usability and compliance across regions.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Misinterpretation of data and training complexity."
+      },
+      {
+        "question": "What dashboard KPIs and drilldowns are most used by PMs and executives? Do you prefer in-app analytics or export to BI tools (Power BI/Tableau)?",
+        "why_it_matters": "Prioritizes design of role-based dashboards and integrations.",
+        "priority": "High",
+        "risk_if_unanswered": "Dashboards that do not drive action or require manual exports."
+      },
+      {
+        "question": "Do you need photo capture, annotations, or e-signatures in the mobile flows (e.g., receiving, handover)?",
+        "why_it_matters": "Affects mobile permissions, storage, and UI components.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Missed proof of delivery and dispute resolution features."
+      },
+      {
+        "question": "What training approach is preferred (train-the-trainer, microlearning in app, video SOPs) and expected time-to-proficiency for each persona?",
+        "why_it_matters": "Informs enablement content and rollout success.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Extended ramp-up time and resistance to change."
+      },
+      {
+        "question": "Do you require accessibility standards (WCAG) and safety considerations for on-site use?",
+        "why_it_matters": "Ensures inclusivity and reduces risk in field conditions.",
+        "priority": "Low",
+        "risk_if_unanswered": "Excludes some users and increases incident risk."
+      },
+      {
+        "question": "Is on-site label printing from mobile flows required (e.g., putaway, repack, returns), and where should those actions appear in the UI?",
+        "why_it_matters": "Impacts flow design and device/printer pairing UX.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Extra steps outside the app reduce efficiency."
+      }
+    ],
+    "Data": [
+      {
+        "question": "What is the scope and quality of current data for migration (item master, suppliers, on-hand balances, open POs), and who owns data cleansing?",
+        "why_it_matters": "Determines migration effort, cleansing plan, and responsibilities.",
+        "priority": "High",
+        "risk_if_unanswered": "Inaccurate starting balances and extended reconciliation."
+      },
+      {
+        "question": "What item master attributes are required (UoM and conversions, categories, alternates/substitutes, kits/BOMs, hazardous flags, dimensions/weight)?",
+        "why_it_matters": "Defines schema and ensures operational suitability.",
+        "priority": "High",
+        "risk_if_unanswered": "Insufficient item data for operations or analytics."
+      },
+      {
+        "question": "How are storage locations modeled (warehouse, area, aisle, bin) and is bin-level tracking required at sites?",
+        "why_it_matters": "Affects inventory accuracy and picking/putaway efficiency.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Poor location accuracy and increased search time."
+      },
+      {
+        "question": "Which stock states must be tracked (available, reserved, in-transit, damaged/QA hold, project-committed)?",
+        "why_it_matters": "Impacts availability logic and reservation rules.",
+        "priority": "High",
+        "risk_if_unanswered": "Over-issuing or stockouts due to incorrect availability."
+      },
+      {
+        "question": "What historical data is needed for reporting/forecasting (consumption by job, wastage reasons) and how many years back?",
+        "why_it_matters": "Enables forecasting models and baseline trend analysis.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Weak forecasting and limited continuous improvement."
+      },
+      {
+        "question": "What supplier data is required (price lists, lead times, MOQs, performance metrics) and update frequency?",
+        "why_it_matters": "Supports procurement automation and vendor scorecards.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Outdated pricing and unreliable replenishment plans."
+      },
+      {
+        "question": "What are data retention and purge policies for transactions, attachments, and audit logs?",
+        "why_it_matters": "Impacts storage costs and compliance.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Uncontrolled data growth or non-compliance."
+      },
+      {
+        "question": "What are daily volumes (SKUs, transactions/day, concurrent mobile scans), and peak periods (seasonality, project phases)?",
+        "why_it_matters": "Guides capacity and performance tuning.",
+        "priority": "High",
+        "risk_if_unanswered": "Performance degradation during peaks."
+      },
+      {
+        "question": "Do you require label data content standards (GS1 AIs, custom fields) and centralized template governance?",
+        "why_it_matters": "Ensures consistent labels and scanner parsing.",
+        "priority": "Low",
+        "risk_if_unanswered": "Inconsistent labels and scanning failures."
+      }
+    ],
+    "Security_Compliance": [
+      {
+        "question": "Which security/compliance frameworks are required (SOC 2, ISO 27001) and any data residency constraints?",
+        "why_it_matters": "Determines hosting and audit controls.",
+        "priority": "High",
+        "risk_if_unanswered": "Non-compliance risks and procurement delays."
+      },
+      {
+        "question": "Detail RBAC needs (roles by persona, site-level segregation, approval SoD), and privileged access controls.",
+        "why_it_matters": "Informs role design and access policies.",
+        "priority": "High",
+        "risk_if_unanswered": "Excessive permissions and audit findings."
+      },
+      {
+        "question": "Encryption requirements for data at rest/in transit and key management preferences (KMS, customer-managed keys).",
+        "why_it_matters": "Sets cryptographic standards and responsibilities.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Weak encryption posture and audit gaps."
+      },
+      {
+        "question": "Authentication/SSO/MFA policies, password rotation, and session timeout requirements.",
+        "why_it_matters": "Secures access and aligns to corporate policy.",
+        "priority": "High",
+        "risk_if_unanswered": "Increased account compromise risk."
+      },
+      {
+        "question": "Logging/monitoring needs (SIEM integration, log retention, audit export format) and alerting thresholds.",
+        "why_it_matters": "Supports incident response and compliance evidence.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Delayed detection of security events."
+      },
+      {
+        "question": "Mobile security standards (device encryption, jailbreak/root detection, remote wipe, offline data protection).",
+        "why_it_matters": "Reduces risk from lost/stolen devices.",
+        "priority": "High",
+        "risk_if_unanswered": "Data exposure from compromised devices."
+      },
+      {
+        "question": "Vulnerability management and pen testing cadence; expectations for remediation SLAs.",
+        "why_it_matters": "Ensures continuous hardening of the solution.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Unaddressed vulnerabilities and audit issues."
+      },
+      {
+        "question": "Any specific audit trail export/report formats for regulators or internal audit?",
+        "why_it_matters": "Shapes audit log schema and export capabilities.",
+        "priority": "Low",
+        "risk_if_unanswered": "Manual effort to produce audit artifacts."
+      }
+    ],
+    "Delivery_Governance": [
+      {
+        "question": "What is the desired implementation timeline, critical dates, and any dependencies with other projects?",
+        "why_it_matters": "Enables realistic planning and sequencing.",
+        "priority": "High",
+        "risk_if_unanswered": "Missed deadlines and resource conflicts."
+      },
+      {
+        "question": "What is the budget range and procurement process (RFP stages, evaluation criteria, contracting constraints)?",
+        "why_it_matters": "Aligns solution scope with commercial viability.",
+        "priority": "High",
+        "risk_if_unanswered": "Rework or disqualification due to misaligned commercials."
+      },
+      {
+        "question": "Preferred rollout approach (pilot site(s) then phased rollout vs big bang) and success criteria per phase.",
+        "why_it_matters": "Defines change risk and learning cycles.",
+        "priority": "High",
+        "risk_if_unanswered": "Overly risky go-live or prolonged rollout."
+      },
+      {
+        "question": "Who are the executive sponsor, product owner, and key SMEs? How will governance be structured (steering cadence)?",
+        "why_it_matters": "Ensures decisions and unblockers are in place.",
+        "priority": "High",
+        "risk_if_unanswered": "Decision bottlenecks and scope creep."
+      },
+      {
+        "question": "Training and change management expectations (super-users, SOPs, on-site training, multilingual materials).",
+        "why_it_matters": "Drives adoption and time-to-value.",
+        "priority": "Medium",
+        "risk_if_unanswered": "User resistance and post-go-live issues."
+      },
+      {
+        "question": "Testing strategy (UAT scope, performance and integration testing, test data), and acceptance criteria.",
+        "why_it_matters": "Reduces go-live risk and defects.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Production incidents and rollback risk."
+      },
+      {
+        "question": "Support expectations (hours of coverage, SLAs, L1–L3 model, languages, escalation paths) and post-go-live hypercare.",
+        "why_it_matters": "Shapes support model and staffing.",
+        "priority": "High",
+        "risk_if_unanswered": "Service gaps and prolonged downtime."
+      },
+      {
+        "question": "What deliverables are required (design docs, training materials, runbooks) and documentation standards?",
+        "why_it_matters": "Sets clear outputs and quality expectations.",
+        "priority": "Low",
+        "risk_if_unanswered": "Ambiguity and acceptance delays."
+      }
+    ],
+    "Commercial_Assumptions": [
+      {
+        "question": "What licensing model is preferred (per user, per site, per transaction) and approximate user counts by persona?",
+        "why_it_matters": "Determines commercial structure and TCO.",
+        "priority": "High",
+        "risk_if_unanswered": "Pricing misalignment and budget surprises."
+      },
+      {
+        "question": "Desired contract term, renewal options, and price protection/escalators?",
+        "why_it_matters": "Impacts long-term cost predictability.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Budget volatility in out-years."
+      },
+      {
+        "question": "Payment terms and milestone structure (design, pilot, rollout, acceptance)?",
+        "why_it_matters": "Aligns cashflow and delivery checkpoints.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Disputes over deliverables and payments."
+      },
+      {
+        "question": "Who procures hardware (scanners, printers, labels) and any preferred vendors?",
+        "why_it_matters": "Clarifies responsibilities and lead times.",
+        "priority": "High",
+        "risk_if_unanswered": "Go-live delays due to missing hardware."
+      },
+      {
+        "question": "Are third-party tools/services expected (iPaaS, SMS, printer software) and who bears those costs?",
+        "why_it_matters": "Captures full solution TCO.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Hidden costs post-award."
+      },
+      {
+        "question": "Any requirement for a paid POC/pilot and success criteria for progressing to full rollout?",
+        "why_it_matters": "Shapes presales effort, scope, and timeline.",
+        "priority": "Medium",
+        "risk_if_unanswered": "Unclear expectations leading to scope creep."
+      },
+      {
+        "question": "IP ownership for customizations/integrations and restrictions on reuse as accelerators?",
+        "why_it_matters": "Defines rights and limits future costs.",
+        "priority": "Low",
+        "risk_if_unanswered": "Contractual disputes and delivery delays."
+      },
+      {
+        "question": "Insurance, liability caps, warranties, and compliance attestations required from vendor?",
+        "why_it_matters": "Informs contracting readiness and risk pricing.",
+        "priority": "Low",
+        "risk_if_unanswered": "Procurement delays or disqualification."
+      }
+    ]
+  },
+  "sales_ppt": {
+    "deck_title": "Construction-Ready, Mobile-First Inventory Management with Offline and ERP Integration",
+    "executive_summary": "Aziro proposes a cloud-native Inventory Management solution tailored for construction. It unifies real-time stock visibility across job sites and warehouses, streamlines procurement, and provides mobile-first barcode/QR scanning with robust offline capability. Prebuilt integration patterns connect to your ERP/accounting systems. Role-based access, audit trails, and enterprise-grade security underpin the platform. A phased roadmap and post-go-live support accelerate time-to-value while minimizing risk.",
+    "proposed_solution_theme": "Construction-ready, mobile-first inventory visibility across job sites and warehouses with offline barcode scanning, automated procurement, and seamless ERP/accounting integration—delivered securely in the cloud with a clear implementation roadmap and strong post-go-live support.",
+    "why_aziro": [
+      "Proven construction workflow expertise across multi-site operations",
+      "Mobile-first architecture with hardened offline sync for remote job sites",
+      "Barcode/QR capabilities optimized for rugged devices and camera-based scanning",
+      "Integration accelerators and reusable connectors for leading ERPs/accounting systems",
+      "Security by design: RBAC, detailed audit logs, SSO/MFA, encryption at rest/in-transit",
+      "Outcome-driven delivery with phased rollouts, training, and hypercare",
+      "Analytics-ready data model enabling dashboards for usage, wastage, and forecasting"
+    ],
+    "differentiators": [
+      "Offline-first sync engine with conflict resolution tailored to field workflows",
+      "Configurable procurement automation (min/max, approvals, vendor lead times) tightly integrated with ERP",
+      "Construction-aware cost allocation (job, phase, cost code) and reservation logic",
+      "Device-agnostic scanning with support for GS1 parsing and on-site label printing",
+      "Scalable cloud architecture with elasticity for peak project periods",
+      "Comprehensive auditability: event-level trails, exportable to SIEM",
+      "Accelerated implementation using templates for items, transactions, and dashboards"
+    ],
+    "recommended_agenda": [
+      "Introductions and objectives",
+      "Your current challenges and success criteria",
+      "Solution overview for multi-site construction inventory",
+      "Real-time visibility and tracking approach",
+      "Mobile + barcode/QR scanning (offline included)",
+      "Procurement automation and supplier management",
+      "Reporting dashboards: usage, wastage, forecasting",
+      "Integration to ERP/accounting and data migration approach",
+      "Security model, scalability, and cloud architecture",
+      "Implementation roadmap, timeline, and change management",
+      "Post-deployment support and SLAs",
+      "Relevant construction experience and case studies",
+      "Use cases and quantified value",
+      "Commercials and assumptions",
+      "Q&A and next steps"
+    ],
+    "slides": [
+      {
+        "slide_no": 1,
+        "title": "Aziro + [Customer]: Inventory Modernization for Construction",
+        "purpose": "Set context and establish meeting objectives.",
+        "key_bullets": [
+          "Purpose: unify material visibility across job sites and warehouses",
+          "Outcome: faster, accurate decisions with mobile-first execution",
+          "Today’s focus: solution fit, integrations, roadmap, value"
+        ],
+        "speaker_notes": "Welcome, align on objectives, confirm time and agenda. Acknowledge construction job site realities—connectivity and pace.",
+        "slide_type": "constant_corporate"
+      },
+      {
+        "slide_no": 2,
+        "title": "Your Challenge and Desired Outcomes",
+        "purpose": "Reframe the business problem and target outcomes.",
+        "key_bullets": [
+          "Fragmented tracking limits real-time stock visibility",
+          "Manual procurement slows builds and increases costs",
+          "Need mobile updates, barcode/QR accuracy, and offline capability",
+          "Dashboards for usage, wastage, and forecasting to drive action"
+        ],
+        "speaker_notes": "Validate the pain points and success metrics; invite customer to add specifics about sites, users, and KPIs.",
+        "slide_type": "tailored_customer"
+      },
+      {
+        "slide_no": 3,
+        "title": "Solution Overview: Construction Inventory Across Sites/Warehouses",
+        "purpose": "Introduce the end-to-end solution scope aligned to construction operations.",
+        "key_bullets": [
+          "Unified item master and stock visibility by site/warehouse/bin",
+          "Job/cost code issues with reservation and staging",
+          "Mobile-first operations with offline sync",
+          "Embedded procurement and supplier workflows"
+        ],
+        "speaker_notes": "Highlight how the solution centralizes control yet works in rugged site conditions with intermittent connectivity.",
+        "slide_type": "tailored_customer"
+      },
+      {
+        "slide_no": 4,
+        "title": "Real-Time Visibility and Tracking Approach",
+        "purpose": "Explain mechanics of real-time stock updates and location accuracy.",
+        "key_bullets": [
+          "Event-driven updates from mobile and warehouse devices",
+          "In-transit, reserved, and available stock states",
+          "Geo/site segmentation with role-based views",
+          "Cycle counts and variance handling"
+        ],
+        "speaker_notes": "Cover how the system prevents double-issuing and shows true availability including reservations and transfers.",
+        "slide_type": "tailored_customer"
+      },
+      {
+        "slide_no": 5,
+        "title": "Mobile + Barcode/QR Scanning (Including Offline Mode)",
+        "purpose": "Demonstrate field-ready scanning and offline-first UX.",
+        "key_bullets": [
+          "Supports camera and rugged scanners; GS1 parsing",
+          "One-hand flows with large controls for site conditions",
+          "Offline queue with conflict resolution and retry logic",
+          "On-site label printing from mobile"
+        ],
+        "speaker_notes": "Stress scanning speed, sunlight readability, and handling of duplicates or damaged barcodes. Show offline transaction queue.",
+        "slide_type": "tailored_customer"
+      },
+      {
+        "slide_no": 6,
+        "title": "Procurement Workflow Automation",
+        "purpose": "Show how replenishment and purchasing are automated and controlled.",
+        "key_bullets": [
+          "Min/max and forecast-driven reorder proposals",
+          "Approval routing by thresholds and budget",
+          "Requisition-to-PO integration with ERP",
+          "Three-way match and exceptions handling"
+        ],
+        "speaker_notes": "Connect procurement automation to reduction in stockouts and expedited buys. Emphasize configurability per site or job.",
+        "slide_type": "tailored_customer"
+      },
+      {
+        "slide_no": 7,
+        "title": "Supplier Management",
+        "purpose": "Explain supplier data, performance, and collaboration.",
+        "key_bullets": [
+          "Onboarding, compliance docs, and vendor catalogs",
+          "Lead times/MOQs, pricing, and contract terms",
+          "Scorecards: OTIF, quality, responsiveness",
+          "Supplier portal/API options"
+        ],
+        "speaker_notes": "Focus on driving reliable supply and visibility into performance trends that affect project timelines.",
+        "slide_type": "tailored_customer"
+      },
+      {
+        "slide_no": 8,
+        "title": "Dashboards and Reporting: Usage, Wastage, Forecasting",
+        "purpose": "Reveal analytics that guide decisions for PMs and executives.",
+        "key_bullets": [
+          "Role-based dashboards for site, procurement, finance",
+          "Usage vs plan, wastage by reason/job, stockout risk",
+          "Forecast accuracy and supplier performance",
+          "Export to Excel/BI and scheduled reports"
+        ],
+        "speaker_notes": "Tie KPIs to actionable workflows (e.g., trigger cycle counts, replenishment).",
+        "slide_type": "tailored_customer"
+      },
+      {
+        "slide_no": 9,
+        "title": "Integration with ERP and Accounting",
+        "purpose": "Outline integration design for masters and transactions.",
+        "key_bullets": [
+          "Bi-directional sync: items, suppliers, POs, receipts",
+          "GL posting alignment via cost codes and jobs",
+          "Patterns: REST APIs/iPaaS/SFTP as needed",
+          "Monitoring, retries, and error handling"
+        ],
+        "speaker_notes": "Confirm ERP/accounting platforms; describe data contracts and latency targets for near real-time visibility.",
+        "slide_type": "tailored_customer"
+      },
+      {
+        "slide_no": 10,
+        "title": "Security Model: RBAC, Audit Trails, Cloud Security",
+        "purpose": "Demonstrate enterprise-grade security aligned to policy.",
+        "key_bullets": [
+          "Granular roles by persona/site with SoD",
+          "Immutable audit logs exportable to SIEM",
+          "SSO/MFA; encryption in transit/at rest",
+          "Backups, DR, and vulnerability management"
+        ],
+        "speaker_notes": "Map requirements to frameworks (SOC 2/ISO 27001) and highlight audit readiness.",
+        "slide_type": "tailored_customer"
+      },
+      {
+        "slide_no": 11,
+        "title": "Scalability and Cloud Architecture",
+        "purpose": "Show how the platform scales and remains resilient.",
+        "key_bullets": [
+          "Cloud-native, autoscaling services",
+          "Multi-tenant or single-tenant options",
+          "Global regions and latency optimization",
+          "High availability with defined RTO/RPO"
+        ],
+        "speaker_notes": "Discuss expected peak loads during project phases and how the architecture absorbs spikes.",
+        "slide_type": "tailored_customer"
+      },
+      {
+        "slide_no": 12,
+        "title": "Implementation Roadmap and Timeline",
+        "purpose": "Present phased plan reducing risk and accelerating value.",
+        "key_bullets": [
+          "Phase 1: pilot sites, core inventory + scanning",
+          "Phase 2: procurement automation + supplier",
+          "Phase 3: analytics, forecasting enhancements",
+          "Change management and training milestones"
+        ],
+        "speaker_notes": "Invite validation of pilot candidates and critical dates; emphasize iterative learning and adoption.",
+        "slide_type": "tailored_customer"
+      },
+      {
+        "slide_no": 13,
+        "title": "Post-Deployment Support and SLAs",
+        "purpose": "Reassure on ongoing operations and performance.",
+        "key_bullets": [
+          "L1–L3 support model with defined SLAs",
+          "Proactive monitoring and incident response",
+          "Release cadence and feature roadmap input",
+          "Hypercare for first 4–8 weeks"
+        ],
+        "speaker_notes": "Agree on coverage hours, languages, and escalation paths.",
+        "slide_type": "tailored_customer"
+      },
+      {
+        "slide_no": 14,
+        "title": "Relevant Construction Experience",
+        "purpose": "Build credibility with domain-aligned case stories.",
+        "key_bullets": [
+          "Multi-site inventory rollout reducing stockouts",
+          "Offline scanning at remote sites with >99.5% sync success",
+          "ERP integrations accelerating close by 2 days/month",
+          "Wastage reduction via reason codes and dashboards"
+        ],
+        "speaker_notes": "Tailor with anonymized examples; focus on measurable outcomes and lessons learned.",
+        "slide_type": "tailored_customer"
+      },
+      {
+        "slide_no": 15,
+        "title": "Use Case: Job Site Receiving with Offline Scanning",
+        "purpose": "Illustrate field workflow value during poor connectivity.",
+        "key_bullets": [
+          "Scan delivery dockets and items; capture photos",
+          "Auto-validate against PO; flag variances",
+          "Queue transactions offline; sync on reconnect",
+          "Instant visibility for PMs and finance"
+        ],
+        "speaker_notes": "Emphasize fewer disputes and faster GRN processing; link to reduced delays.",
+        "slide_type": "use_case"
+      },
+      {
+        "slide_no": 16,
+        "title": "Use Case: Automated Replenishment to Jobs",
+        "purpose": "Show proactive inventory planning and procurement.",
+        "key_bullets": [
+          "Min/max and forecast proposals per site/job",
+          "Approval routing with budget checks",
+          "PO creation and supplier lead-time alignment",
+          "Prevent stockouts and urgent buys"
+        ],
+        "speaker_notes": "Quantify savings from fewer expedites and better supplier coordination.",
+        "slide_type": "use_case"
+      },
+      {
+        "slide_no": 17,
+        "title": "Value and Benefits Summary",
+        "purpose": "Quantify impact and align on expected ROI.",
+        "key_bullets": [
+          "Reduce wastage by 10–20% via reason tracking",
+          "Cut stockouts by 30–50% with proactive replenishment",
+          "Improve receiving throughput by 25–40% with scanning",
+          "Shorten month-end reconciliation by 1–2 days"
+        ],
+        "speaker_notes": "Position these as benchmarks; confirm customer’s baseline to refine targets.",
+        "slide_type": "tailored_customer"
+      },
+      {
+        "slide_no": 18,
+        "title": "Why Aziro",
+        "purpose": "Differentiate Aziro’s capabilities and approach.",
+        "key_bullets": [
+          "Construction workflow depth and references",
+          "Offline-first mobile and GS1-ready scanning",
+          "ERP connectors and proven integration patterns",
+          "Security by design, audit-ready"
+        ],
+        "speaker_notes": "Summarize key differentiators and risk mitigation from experience.",
+        "slide_type": "constant_corporate"
+      },
+      {
+        "slide_no": 19,
+        "title": "Commercials and Assumptions",
+        "purpose": "Set transparent baseline for sizing and pricing.",
+        "key_bullets": [
+          "Licensing model options (user/site/transaction)",
+          "Scope inclusions: config, integrations, migration, training",
+          "Hardware and third-party costs handled separately",
+          "POC/pilot pathway and acceptance criteria"
+        ],
+        "speaker_notes": "Invite procurement discussion; align on assumptions before formal quote.",
+        "slide_type": "tailored_customer"
+      },
+      {
+        "slide_no": 20,
+        "title": "Next Steps",
+        "purpose": "Gain agreement on the evaluation plan and timeline.",
+        "key_bullets": [
+          "Discovery workshops to finalize scope and integrations",
+          "Pilot site selection and success metrics",
+          "Data migration assessment and cutover plan",
+          "Target dates for proposal, demo, and kickoff"
+        ],
+        "speaker_notes": "Confirm owners and dates. Offer to share a detailed discovery checklist immediately.",
+        "slide_type": "closing"
+      }
+    ],
+    "use_cases": [
+      {
+        "title": "Job Site Receiving with Offline Barcode Scanning",
+        "customer_problem": "Deliveries arrive at remote sites with limited connectivity, causing delays in recording receipts, mismatches with POs, and disputes over quantities/conditions.",
+        "aziro_solution": "Mobile app enables barcode/QR scanning against POs, photo capture for damages, and offline queuing. On reconnect, transactions sync to the cloud and ERP with variance alerts.",
+        "business_value": "Accelerates goods receipt, reduces disputes and write-offs, and provides immediate visibility to PMs and finance; improves supplier accountability.",
+        "why_relevant_here": "Directly addresses the need for mobile updates, barcode accuracy, auditability, and offline-first operation at job sites."
+      },
+      {
+        "title": "Automated Replenishment and Procurement",
+        "customer_problem": "Reactive purchasing leads to stockouts and costly expedite orders; PMs lack forward visibility into material needs by job and phase.",
+        "aziro_solution": "Configurable min/max and forecast-driven proposals per site/job with approval workflows. Generates requisitions/POs and syncs to ERP; tracks supplier lead times and performance.",
+        "business_value": "Fewer stockouts and expedites, optimized inventory levels, improved schedule adherence, and reduced carrying costs.",
+        "why_relevant_here": "Aligns with desired procurement automation, supplier management, and forecasting dashboards integrated with ERP/accounting."
+      }
+    ],
+    "template_instructions": {
+      "must_include_slides_alignment": [
+        "Solution overview for construction inventory across job sites/warehouses",
+        "Real-time inventory visibility and tracking approach",
+        "Mobile + barcode/QR scanning capabilities (including offline mode)",
+        "Procurement workflow automation",
+        "Supplier management approach",
+        "Reporting dashboards (usage, wastage, forecasting)",
+        "Integration approach with ERP and accounting systems",
+        "Security model (RBAC, audit trails, cloud security)",
+        "Scalability and cloud architecture overview",
+        "Implementation roadmap and timeline",
+        "Post-deployment support model and SLAs (if applicable)",
+        "Relevant construction workflow experience/case studies"
+      ],
+      "logo_theme": null,
+      "reference_urls": []
+    },
+    "constant_corporate_slides": [
+      "Aziro + [Customer]: Inventory Modernization for Construction",
+      "Why Aziro"
+    ]
+  }
+}

@@ -1,0 +1,229 @@
+{
+"sales_ppt": {
+"deck_title": "Embedded Payments for Acumatica: Secure, Automated, and Reconciliation-Ready",
+"executive_summary": "You aim to integrate payment processing tightly with Acumatica to streamline AR/AP workflows, reduce manual reconciliation, and improve cash flow. Aziro proposes a secure, API-first integration leveraging Acumatica’s REST/contract-based APIs and provider webhooks to achieve real-time status updates, reliable data synchronization, and audit-ready reconciliation. Our approach is provider-agnostic, minimizes PCI scope through tokenization/hosted components, and is delivered in phases for rapid value realization.",
+"proposed_solution_theme": "Accelerate finance operations by embedding secure, automated payment processing directly into Acumatica with reliable synchronization and reconciliation.",
+"why_aziro": [
+"Deep ERP and finance integration expertise with Acumatica APIs and customization framework.",
+"Payments domain knowledge (PCI, tokenization, settlements, disputes) to design compliant, low-risk solutions.",
+"Provider-agnostic approach with patterns for major gateways and bank ACH rails.",
+"Reconciliation accelerator for settlements, fees, chargebacks, and GL postings.",
+"Robust delivery with testing harnesses, sandbox-first validation, and observability-by-default.",
+"Proven agile playbook for phased go-lives with minimal business disruption."
+],
+"differentiators": [
+"Prebuilt integration patterns for Acumatica AR/AP, including idempotent webhook ingestion and async retries.",
+"Reconciliation and payout mapping accelerator that reduces month-end close by days.",
+"Security-by-design: tokenization-first, hosted payment components, and least-privilege roles.",
+"Operational telemetry pack (structured logs, dashboards, alerts) for fast incident resolution.",
+"Vendor-agnostic design to avoid lock-in and enable future provider swaps.",
+"Change management and training assets tailored for Finance/AP/AR teams."
+],
+"recommended_agenda": [
+"Objectives and Success Criteria",
+"Current Payment Flows and Challenges",
+"Solution Overview and Architecture Options",
+"Data Model, Mapping, and Reconciliation",
+"Security, Compliance, and Controls",
+"Implementation Plan, Timeline, and Risks",
+"Why Aziro and Case Studies",
+"Next Steps and Commercials"
+
+],
+"slides": [
+{
+"slide_no": 1,
+"title": "Integrated Payments in Acumatica: Vision and Outcomes",
+"purpose": "Set context and align on the outcomes of an embedded payment solution.",
+"key_bullets": [
+"Seamless AR/AP payment processing inside Acumatica",
+"Real-time sync of authorizations, captures, payouts, and fees",
+"Audit-ready reconciliation with reduced month-end effort"
+],
+"speaker_notes": "We will show how to embed secure payments in Acumatica to improve cash flow and reduce manual work, while keeping PCI scope minimal.",
+"slide_type": "constant_corporate"
+},
+{
+"slide_no": 2,
+"title": "Your Objectives and Success Metrics",
+"purpose": "Confirm goals and define measurable KPIs for the initiative.",
+"key_bullets": [
+"Reduce DSO and accelerate cash application",
+"Increase auto-apply rate to >90%",
+"Cut reconciliation time by 50%+",
+"Improve first-try payment success and reduce declines"
+],
+"speaker_notes": "We will finalize targets during discovery; these drive scope and prioritization.",
+"slide_type": "tailored_customer"
+},
+{
+"slide_no": 3,
+"title": "Current Challenges and Risks",
+"purpose": "Surface pain points to address with the integration.",
+"key_bullets": [
+"Manual keying between gateway and Acumatica",
+"Delayed status updates and posting mismatches",
+"Limited visibility into fees, disputes, and payouts"
+],
+"speaker_notes": "These are common issues we solve with event-driven syncs and standardized mappings.",
+"slide_type": "tailored_customer"
+},
+{
+"slide_no": 4,
+"title": "Solution Overview",
+"purpose": "Introduce the end-to-end approach and value pillars.",
+"key_bullets": [
+"API-first integration with provider webhooks",
+"Hosted/tokenized payment capture to minimize PCI scope",
+"Reconciliation accelerator for settlements, fees, and chargebacks"
+],
+"speaker_notes": "We will tailor the exact pattern to your provider and Acumatica version.",
+"slide_type": "tailored_customer"
+},
+{
+"slide_no": 5,
+"title": "Architecture Options",
+"purpose": "Compare integration patterns and trade-offs.",
+"key_bullets": [
+"Native Acumatica customization vs REST integration",
+"Middleware/iPaaS for orchestration and monitoring",
+"Provider-agnostic design to avoid lock-in"
+],
+"speaker_notes": "We recommend the lightest solution that meets scale and compliance needs.",
+"slide_type": "tailored_customer"
+},
+{
+"slide_no": 6,
+"title": "Data Flows and Object Mapping",
+"purpose": "Show how invoices, payments, payouts, and fees synchronize.",
+"key_bullets": [
+"Customer/vendor, invoice, payment, credit memo objects",
+"Idempotent keys, retries, and duplicate prevention",
+"Net vs gross settlement mapping to cash/clearing accounts"
+],
+"speaker_notes": "Accurate mapping is the backbone of reliable reconciliation and reporting.",
+"slide_type": "tailored_customer"
+},
+{
+"slide_no": 7,
+"title": "Security and Compliance by Design",
+"purpose": "Demonstrate how the solution minimizes risk and audit scope.",
+"key_bullets": [
+"Tokenization and hosted fields reduce PCI scope",
+"RBAC, MFA, and immutable audit logs in Acumatica",
+"Encrypted transport/storage and vendor attestations"
+],
+"speaker_notes": "We map controls to PCI and your internal audit requirements.",
+"slide_type": "tailored_customer"
+},
+{
+"slide_no": 8,
+"title": "Reconciliation and Reporting",
+"purpose": "Explain daily funding, fees, chargebacks, and close process.",
+"key_bullets": [
+"Webhook + scheduled payout ingestion",
+"Automated matching and exception queues",
+"Dashboards: DSO, declines, dispute rates"
+],
+"speaker_notes": "Our accelerator reduces manual effort and supports faster month-end close.",
+"slide_type": "tailored_customer"
+},
+{
+"slide_no": 9,
+"title": "Implementation Plan and Timeline",
+"purpose": "Outline phased delivery with clear milestones.",
+"key_bullets": [
+"Phase 0: Discovery and design",
+"Phase 1: AR payments + basic reconciliation",
+"Phase 2: AP ACH + advanced reporting",
+"Hypercare, handover, and optimization"
+],
+"speaker_notes": "Phased approach delivers value early and reduces go-live risk.",
+"slide_type": "tailored_customer"
+},
+{
+"slide_no": 10,
+"title": "Why Aziro",
+"purpose": "Show credibility and fit for this work.",
+"key_bullets": [
+"Acumatica integration expertise",
+"Payments domain and PCI experience",
+"Operational excellence and observability"
+],
+"speaker_notes": "We bring reusable patterns that shorten timelines and reduce risk.",
+"slide_type": "constant_corporate"
+},
+{
+"slide_no": 11,
+"title": "Use Case: AR Customer Payments",
+"purpose": "Illustrate AR flow from authorization to reconciliation.",
+"key_bullets": [
+"Capture payments from invoice/sales order screens",
+"Auto-apply to invoices and update status in real time",
+"Ingest settlements and fees for GL posting"
+],
+"speaker_notes": "This use case improves cash application speed and accuracy.",
+"slide_type": "use_case"
+},
+{
+"slide_no": 12,
+"title": "Use Case: AP Vendor ACH Runs",
+"purpose": "Demonstrate AP payment automation and status sync.",
+"key_bullets": [
+"Initiate ACH batches from Acumatica pay runs",
+"Track acknowledgements/returns via webhooks",
+"Reconcile payouts and bank statements"
+],
+"speaker_notes": "Reduces manual follow-up and provides clear cash position.",
+"slide_type": "use_case"
+},
+{
+"slide_no": 13,
+"title": "Risks and Mitigations",
+"purpose": "Proactively address key delivery and technical risks.",
+"key_bullets": [
+"Webhook reliability → retries and DLQs",
+"Provider limits → rate-aware batching",
+"Change fatigue → training and hypercare"
+],
+"speaker_notes": "We build reliability into the architecture and support model.",
+"slide_type": "tailored_customer"
+},
+{
+"slide_no": 14,
+"title": "Next Steps and Commercials",
+"purpose": "Align on path forward and engagement model.",
+"key_bullets": [
+"Schedule discovery workshops",
+"Confirm provider sandbox access",
+"Finalize scope, timeline, and commercials"
+],
+"speaker_notes": "We can mobilize quickly once sandbox and stakeholders are confirmed.",
+"slide_type": "closing"
+}
+],
+"use_cases": [
+{
+"title": "AR Customer Payments with Real-Time Sync and Reconciliation",
+"customer_problem": "AR teams manually key payments from a gateway into Acumatica, causing delays, mismatches, and slow cash application.",
+"aziro_solution": "Embed tokenized/hosted payment capture in Acumatica AR screens, use provider webhooks and idempotent APIs to auto-apply receipts, and ingest settlements/fees to GL via a reconciliation accelerator.",
+"business_value": "Faster DSO, fewer posting errors, reduced manual effort, and audit-ready reconciliation.",
+"why_relevant_here": "Directly addresses the need for seamless payment processing and reliable data synchronization with Acumatica."
+},
+{
+"title": "AP Vendor ACH Automation with Status Visibility",
+"customer_problem": "AP runs ACH outside Acumatica with limited status feedback, leading to blind spots on returns and manual reconciliations.",
+"aziro_solution": "Trigger ACH batches from Acumatica, receive acknowledgements/returns via secure webhooks, and auto-reconcile payouts to bank statements with exception queues.",
+"business_value": "Improved cash control, fewer AP errors, and accelerated close.",
+"why_relevant_here": "Expands integration beyond AR to cover end-to-end payment workflows within ERP."
+},
+{
+"title": "Recurring Billing and Autopay for Subscriptions",
+"customer_problem": "Manual recurring charges and renewals create churn risk and inconsistent revenue recognition.",
+"aziro_solution": "Leverage provider vault tokens to schedule autopay runs, sync attempts and outcomes to Acumatica, and manage retries/notifications automatically.",
+"business_value": "Predictable cash collection, lower involuntary churn, and less back-office work.",
+"why_relevant_here": "Common extension once core AR payments are live; uses the same integration and reconciliation patterns."
+}
+]
+}
+}

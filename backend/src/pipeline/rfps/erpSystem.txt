@@ -1,0 +1,21 @@
+Hi,
+
+We’re currently exploring options to improve how payments work with our ERP (Acumatica).
+
+At the moment, a lot of things are manual — especially around customer payments, vendor payments, and reconciliation. We also don’t have great visibility into what’s happening with settlements, fees, or failed transactions.
+
+We’d like to move towards something more integrated, ideally where payments tie in more directly with our existing workflows. Not fully sure yet whether this should sit inside Acumatica or be handled externally.
+
+We probably need to support common payment methods (cards, bank transfers, etc.), and there may be a need for things like refunds, maybe recurring payments down the line.
+
+Security and compliance are obviously important, especially around handling payment data, but we’re open to recommendations on best approach.
+
+From a technical side, we don’t have a fixed preference — open to APIs, middleware, or whatever makes sense. Would be good to understand what you typically recommend.
+
+Reporting is another area we want to improve — right now reconciliation is pretty time-consuming.
+
+Timeline is flexible for now, but we’d like to start soon if it makes sense.
+
+Happy to get your thoughts on approach, rough scope, and anything else we should be considering.
+
+Thanks

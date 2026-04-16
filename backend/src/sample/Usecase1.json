@@ -1,0 +1,610 @@
+{
+"questionnaire": {
+"Functional": [
+{
+"question": "Which payment flows are in scope for phase 1 vs later (AR customer payments, AP vendor payments, refunds, chargebacks/disputes, recurring/subscriptions, deposits/prepayments)?",
+"why_it_matters": "Clarifies breadth of integration and workflow coverage so we can scope design, test cases, and rollout sequencing.",
+"priority": "High",
+"risk_if_unanswered": "Scope creep, missed edge cases, and a solution that does not meet critical day-1 needs."
+},
+{
+"question": "What payment methods must be supported (ACH, credit/debit cards, wires, RTP), and are there surcharges/convenience fees or cash-discounting rules?",
+"why_it_matters": "Determines provider capabilities, field mappings, and fee handling in AR/AP and GL.",
+"priority": "High",
+"risk_if_unanswered": "Inability to accept preferred customer/vendor payment types; non-compliant fee handling."
+},
+{
+"question": "Which user channels initiate payments (Acumatica AR screens, AP payment runs, customer portal, emailed pay links, call center, POS)?",
+"why_it_matters": "Drives UX patterns, security controls, and integration triggers (UI vs API vs workflow).",
+"priority": "High",
+"risk_if_unanswered": "Poor adoption and fragmented experiences across channels."
+},
+{
+"question": "Do you require authorization and later capture, or immediate sale/capture? Any partial captures or split payments?",
+"why_it_matters": "Impacts state machine, reconciliation logic, and invoice application in Acumatica.",
+"priority": "High",
+"risk_if_unanswered": "Settlement mismatches and incorrect invoice status updates."
+},
+{
+"question": "Will customers/vendors be tokenized for saved payment methods and one-click payments? Who will own/custody tokens?",
+"why_it_matters": "Affects PCI scope and token reference storage in Acumatica vs provider vault.",
+"priority": "High",
+"risk_if_unanswered": "Expanded PCI scope and rework to align token custody with compliance."
+},
+{
+"question": "What multi-company/branch scenarios, currencies, and countries are in scope?",
+"why_it_matters": "Determines configuration, GL mapping by entity, and FX handling across settlements.",
+"priority": "High",
+"risk_if_unanswered": "Inconsistent postings and reporting across entities and currencies."
+},
+{
+"question": "How should refunds (full/partial) and voids be initiated and approved? From Acumatica or provider portal?",
+"why_it_matters": "Defines directional sync and source of truth for financial reversals.",
+"priority": "Medium",
+"risk_if_unanswered": "Double-refunds or orphaned reversals leading to reconciliation pain."
+},
+{
+"question": "What reconciliation cadence and reports are required (daily funding, fees, chargebacks, settlements, payout batches)?",
+"why_it_matters": "Guides data ingestion, mappings to cash/clearing accounts, and month-end close.",
+"priority": "High",
+"risk_if_unanswered": "Extended close cycles and manual reconciliations."
+},
+{
+"question": "What approval workflows and segregation of duties are required for payment initiation, refunds, and vendor payment runs?",
+"why_it_matters": "Impacts Acumatica workflow setup, roles, and audit requirements.",
+"priority": "Medium",
+"risk_if_unanswered": "SoD violations and audit findings."
+},
+{
+"question": "Any industry-specific needs (e.g., Level 2/3 card data for B2B, surcharging rules by state, healthcare/education nuances)?",
+"why_it_matters": "Ensures interchange optimization and regulatory adherence.",
+"priority": "Medium",
+"risk_if_unanswered": "Higher processing costs or legal exposure."
+}
+],
+"Technical": [
+{
+"question": "Which Acumatica edition/version and deployment model (SaaS vs on-prem/private cloud) are you running?",
+"why_it_matters": "Determines available APIs, deployment constraints, and upgrade compatibility.",
+"priority": "High",
+"risk_if_unanswered": "Integration approach may be incompatible or brittle during upgrades."
+},
+{
+"question": "Preferred integration pattern: native Acumatica customization, direct REST/contract-based API integration, or middleware/iPaaS?",
+"why_it_matters": "Impacts build timeline, maintainability, and total cost of ownership.",
+"priority": "High",
+"risk_if_unanswered": "Over-engineered or under-scaled solution with poor operability."
+},
+{
+"question": "Which payment provider(s)/gateway(s) are in scope and do you have API/webhook documentation and sandbox credentials?",
+"why_it_matters": "API capabilities and webhook reliability drive eventing, idempotency, and sync accuracy.",
+"priority": "High",
+"risk_if_unanswered": "Delays in technical design and inability to validate end-to-end flows."
+},
+{
+"question": "Expected transaction volumes, peak TPS, and latency/SLAs for posting and settlement ingestion?",
+"why_it_matters": "Guides scaling, batching strategy, and retry/backoff configurations.",
+"priority": "High",
+"risk_if_unanswered": "Time-outs, throttling, and missed settlements under load."
+},
+{
+"question": "How will webhooks/callbacks be delivered (security, retries, ordering, idempotency keys, DLQs)?",
+"why_it_matters": "Ensures reliable state synchronization between provider and Acumatica.",
+"priority": "High",
+"risk_if_unanswered": "Duplicate or missing transactions; hard-to-debug race conditions."
+},
+{
+"question": "Do you require SSO (SAML/OAuth) and role mapping for Acumatica users involved in payments?",
+"why_it_matters": "Affects authentication, provisioning, and least-privilege design.",
+"priority": "Medium",
+"risk_if_unanswered": "Access sprawl and audit gaps."
+},
+{
+"question": "What environments are available (dev/sandbox/UAT/prod) and how will data be masked for testing?",
+"why_it_matters": "Key for safe validation without exposing PAN/PII.",
+"priority": "High",
+"risk_if_unanswered": "Test data risks and late defects in production."
+},
+{
+"question": "Any network/security constraints (allowlists, proxies, private endpoints) for provider/API connectivity?",
+"why_it_matters": "Impacts connectivity design and deployment sequencing.",
+"priority": "Medium",
+"risk_if_unanswered": "Firewall blocks and failed go-live cutovers."
+},
+{
+"question": "Observability requirements (structured logs, metrics, traces, dashboards, alerting)?",
+"why_it_matters": "Supports proactive operations and SLA adherence.",
+"priority": "Medium",
+"risk_if_unanswered": "Prolonged incidents and weak root-cause analysis."
+}
+],
+"Design_UX": [
+{
+"question": "Should payments be embedded within Acumatica screens (e.g., AR Invoice) or use hosted/redirect pages?",
+"why_it_matters": "Determines UX, PCI scope, and implementation complexity.",
+"priority": "High",
+"risk_if_unanswered": "Inconsistent experience and unforeseen PCI obligations."
+},
+{
+"question": "Do you need customer-facing payment links, QR codes, or portal flows with branding and responsive design?",
+"why_it_matters": "Defines external UX artifacts and branding deliverables.",
+"priority": "Medium",
+"risk_if_unanswered": "Poor adoption and increased support volume."
+},
+{
+"question": "What exception handling UX is required (declines, partial matches, duplicate detection, dispute queues)?",
+"why_it_matters": "Improves back-office efficiency and error resolution time.",
+"priority": "High",
+"risk_if_unanswered": "Manual workarounds and aging receivables."
+},
+{
+"question": "What notifications and artifacts are needed (email/SMS receipts, statement descriptors, invoice attachments)?",
+"why_it_matters": "Impacts customer trust and reduces disputes.",
+"priority": "Medium",
+"risk_if_unanswered": "Higher dispute rates and call center burden."
+},
+{
+"question": "Accessibility and localization needs (WCAG, languages, date/number formats, time zones)?",
+"why_it_matters": "Ensures inclusive design and global usability.",
+"priority": "Low",
+"risk_if_unanswered": "Limited user adoption in certain regions or roles."
+},
+{
+"question": "What training artifacts are required (quick-reference guides, in-app tips, videos) and who are target personas?",
+"why_it_matters": "Drives change management and reduces ramp time.",
+"priority": "Medium",
+"risk_if_unanswered": "Prolonged onboarding and avoidable errors."
+},
+{
+"question": "Branding constraints (logo usage, color palette, typography) for customer-facing payment experiences?",
+"why_it_matters": "Ensures consistency with corporate identity and trust.",
+"priority": "Low",
+"risk_if_unanswered": "Off-brand experience and lower conversion."
+}
+],
+"Data": [
+{
+"question": "Which objects must be synchronized and their direction (customers, vendors, invoices, credit memos, cash receipts, payouts, fees, chargebacks)?",
+"why_it_matters": "Establishes the canonical data model and API mappings.",
+"priority": "High",
+"risk_if_unanswered": "Gaps in end-to-end posting and reconciliation."
+},
+{
+"question": "What are the unique identifiers and idempotency keys for transactions and payouts?",
+"why_it_matters": "Prevents duplicates and ensures safe retries.",
+"priority": "High",
+"risk_if_unanswered": "Double postings or missed transactions."
+},
+{
+"question": "How should processor fees and chargebacks be represented in Acumatica (accounts, subaccounts, projects, branches)?",
+"why_it_matters": "Affects GL accuracy and margin analysis.",
+"priority": "High",
+"risk_if_unanswered": "Misstated financials and opaque costs."
+},
+{
+"question": "Net vs gross settlement preference and mapping to cash/clearing accounts?",
+"why_it_matters": "Impacts reconciliation design and bank matching.",
+"priority": "High",
+"risk_if_unanswered": "Complex manual reconciliations and audit issues."
+},
+{
+"question": "Reporting requirements (cash application, DSO, settlement aging, dispute rates, success/decline metrics)?",
+"why_it_matters": "Defines data retention and analytics needs.",
+"priority": "Medium",
+"risk_if_unanswered": "Inability to measure impact or optimize processes."
+},
+{
+"question": "Data retention, masking, and purge policies for PAN/PII and tokens within Acumatica and logs?",
+"why_it_matters": "Key for PCI/GDPR compliance and storage footprint.",
+"priority": "High",
+"risk_if_unanswered": "Compliance exposure and storage bloat."
+},
+{
+"question": "Cutoff times, time zones, and posting dates for settlements and back-valuations?",
+"why_it_matters": "Ensures accurate period close and FX treatment.",
+"priority": "Medium",
+"risk_if_unanswered": "Period mispostings and timing variances."
+},
+{
+"question": "Historical backfill/migration required (open invoices, customer tokens, outstanding disputes)?",
+"why_it_matters": "Impacts project plan and validation effort.",
+"priority": "Medium",
+"risk_if_unanswered": "Go-live friction and parallel system dependencies."
+},
+{
+"question": "Master data ownership and quality rules (customer/vendor deduplication, address validation, bank details verification)?",
+"why_it_matters": "Reduces settlement failures and ACH returns.",
+"priority": "Medium",
+"risk_if_unanswered": "Payment errors and rework."
+},
+{
+"question": "Currency and FX handling (settlement currency vs invoice currency, exchange rate sources)?",
+"why_it_matters": "Affects AR/AP postings and realized/unrealized gains/losses.",
+"priority": "Medium",
+"risk_if_unanswered": "Incorrect FX accounting."
+}
+],
+"Security_Compliance": [
+{
+"question": "What PCI DSS scope and SAQ type are targeted, and who will handle card data (fully hosted vs embedded vs on-prem)?",
+"why_it_matters": "Defines architecture patterns to minimize PCI scope.",
+"priority": "High",
+"risk_if_unanswered": "Overly complex compliance scope and cost."
+},
+{
+"question": "Tokenization approach and custody (provider vault vs internal), and PAN masking policies?",
+"why_it_matters": "Reduces sensitive data exposure and audit scope.",
+"priority": "High",
+"risk_if_unanswered": "Data leakage risk and failed assessments."
+},
+{
+"question": "Required attestations and certifications (PCI DSS, SOC 2, ISO 27001) for vendors and integrator?",
+"why_it_matters": "Impacts vendor selection and procurement approval.",
+"priority": "Medium",
+"risk_if_unanswered": "Procurement delays or disqualification."
+},
+{
+"question": "Access controls: MFA, RBAC/least privilege, segregation of duties, and privileged access monitoring?",
+"why_it_matters": "Protects payment initiation and refund workflows.",
+"priority": "High",
+"risk_if_unanswered": "Fraud risk and audit findings."
+},
+{
+"question": "Encryption standards for data in transit and at rest, including key management and rotation?",
+"why_it_matters": "Core to protecting sensitive data and compliance.",
+"priority": "High",
+"risk_if_unanswered": "Compromised data and penalties."
+},
+{
+"question": "Audit and traceability requirements (immutable logs, who-when-what for payments/refunds, retention windows)?",
+"why_it_matters": "Supports forensics and compliance reporting.",
+"priority": "Medium",
+"risk_if_unanswered": "Insufficient evidence for audits and investigations."
+},
+{
+"question": "Data residency and privacy obligations (GDPR/CCPA, regional hosting, cross-border transfers)?",
+"why_it_matters": "Influences provider choice and hosting strategy.",
+"priority": "Medium",
+"risk_if_unanswered": "Regulatory non-compliance and fines."
+},
+{
+"question": "Security testing posture (SAST/DAST, pen tests, vulnerability mgmt, patch cadence)?",
+"why_it_matters": "Ensures ongoing security hygiene of integration components.",
+"priority": "Low",
+"risk_if_unanswered": "Accumulated vulnerabilities and exploit risk."
+},
+{
+"question": "Incident response and BCDR requirements (RPO/RTO, runbooks, tabletop exercises)?",
+"why_it_matters": "Defines resilience and recovery expectations.",
+"priority": "Medium",
+"risk_if_unanswered": "Extended downtime and financial impact during incidents."
+}
+],
+"Delivery_Governance": [
+{
+"question": "Who are the executive sponsor, product owner, finance lead, and technical owner? Any third-party participants (gateway/processor)?",
+"why_it_matters": "Clarifies decision rights and accountability.",
+"priority": "High",
+"risk_if_unanswered": "Decision delays and misalignment."
+},
+{
+"question": "What are the success criteria and KPIs (DSO reduction, auto-apply rate, reconciliation time, decline rate improvement)?",
+"why_it_matters": "Anchors scope and prioritizes value.",
+"priority": "High",
+"risk_if_unanswered": "Subjective success and scope drift."
+},
+{
+"question": "Target timeline, milestones, and any hard dates (quarter close, peak season freezes)?",
+"why_it_matters": "Informs phasing and risk mitigation.",
+"priority": "High",
+"risk_if_unanswered": "Missed commitments and cutover risk."
+},
+{
+"question": "Internal capacity and roles (SMEs, testers, admins) and required training/onboarding from Aziro?",
+"why_it_matters": "Sets realistic resourcing and schedule.",
+"priority": "Medium",
+"risk_if_unanswered": "Bottlenecks and quality issues."
+},
+{
+"question": "Testing strategy (unit/integration/UAT), payment provider certification steps, and test data availability?",
+"why_it_matters": "Ensures end-to-end validation pre go-live.",
+"priority": "High",
+"risk_if_unanswered": "Late defects and rejected certifications."
+},
+{
+"question": "Change management plan and communications to Finance/AP/AR teams and customers/vendors?",
+"why_it_matters": "Critical for adoption and minimal disruption.",
+"priority": "Medium",
+"risk_if_unanswered": "Resistance to change and higher support load."
+},
+{
+"question": "Go-live plan (cutover, parallel run, rollback) and hypercare duration/SLAs?",
+"why_it_matters": "Reduces launch risk and ensures support readiness.",
+"priority": "High",
+"risk_if_unanswered": "Prolonged incidents and business interruption."
+},
+{
+"question": "Post-go-live ownership, monitoring, and continuous improvement cadence?",
+"why_it_matters": "Defines sustainability and optimization path.",
+"priority": "Medium",
+"risk_if_unanswered": "Solution decay and rising operational cost."
+}
+],
+"Commercial_Assumptions": [
+{
+"question": "What is the budget range and funding model for this initiative?",
+"why_it_matters": "Guides solution approach and phasing to fit constraints.",
+"priority": "High",
+"risk_if_unanswered": "Mismatched proposal and approval delays."
+},
+{
+"question": "Preferred commercial structure with Aziro (fixed price, T&M, capped T&M) and any milestone-based payments?",
+"why_it_matters": "Aligns contracting with risk-sharing expectations.",
+"priority": "Medium",
+"risk_if_unanswered": "Prolonged negotiation and start delays."
+},
+{
+"question": "Any existing processor/gateway contracts, pricing tiers, or required volumes/commitments?",
+"why_it_matters": "Influences provider selection and ROI modeling.",
+"priority": "Medium",
+"risk_if_unanswered": "Unexpected processing costs and lock-in."
+},
+{
+"question": "Licensing implications (Acumatica ISV solutions, middleware/iPaaS, connector fees) and who procures them?",
+"why_it_matters": "Ensures total cost clarity and timely procurement.",
+"priority": "Medium",
+"risk_if_unanswered": "Hidden costs and schedule risk."
+},
+{
+"question": "Expected ROI and value targets (cash acceleration, fee reductions, operational savings)?",
+"why_it_matters": "Prioritizes features that deliver measurable outcomes.",
+"priority": "High",
+"risk_if_unanswered": "Low-value delivery and stakeholder dissatisfaction."
+},
+{
+"question": "Payment terms, invoicing cadence, and vendor onboarding requirements with your AP/Procurement team?",
+"why_it_matters": "Prevents administrative delays to kickoff.",
+"priority": "Low",
+"risk_if_unanswered": "Contract execution delays."
+},
+{
+"question": "Any compliance or audit deadlines that influence budget/timing (PCI, SOC 2, external audit schedules)?",
+"why_it_matters": "May require front-loading security/compliance tasks.",
+"priority": "Medium",
+"risk_if_unanswered": "Last-minute rush and cost overruns."
+},
+{
+"question": "Preferred support model and budget post go-live (SLA, on-call windows, enhancement backlog)?",
+"why_it_matters": "Sets ongoing run costs and service levels.",
+"priority": "Medium",
+"risk_if_unanswered": "Underfunded operations and service gaps."
+}
+]
+},
+"sales_ppt": {
+"deck_title": "Embedded Payments for Acumatica: Secure, Automated, and Reconciliation-Ready",
+"executive_summary": "You aim to integrate payment processing tightly with Acumatica to streamline AR/AP workflows, reduce manual reconciliation, and improve cash flow. Aziro proposes a secure, API-first integration leveraging Acumatica’s REST/contract-based APIs and provider webhooks to achieve real-time status updates, reliable data synchronization, and audit-ready reconciliation. Our approach is provider-agnostic, minimizes PCI scope through tokenization/hosted components, and is delivered in phases for rapid value realization.",
+"proposed_solution_theme": "Accelerate finance operations by embedding secure, automated payment processing directly into Acumatica with reliable synchronization and reconciliation.",
+"why_aziro": [
+"Deep ERP and finance integration expertise with Acumatica APIs and customization framework.",
+"Payments domain knowledge (PCI, tokenization, settlements, disputes) to design compliant, low-risk solutions.",
+"Provider-agnostic approach with patterns for major gateways and bank ACH rails.",
+"Reconciliation accelerator for settlements, fees, chargebacks, and GL postings.",
+"Robust delivery with testing harnesses, sandbox-first validation, and observability-by-default.",
+"Proven agile playbook for phased go-lives with minimal business disruption."
+],
+"differentiators": [
+"Prebuilt integration patterns for Acumatica AR/AP, including idempotent webhook ingestion and async retries.",
+"Reconciliation and payout mapping accelerator that reduces month-end close by days.",
+"Security-by-design: tokenization-first, hosted payment components, and least-privilege roles.",
+"Operational telemetry pack (structured logs, dashboards, alerts) for fast incident resolution.",
+"Vendor-agnostic design to avoid lock-in and enable future provider swaps.",
+"Change management and training assets tailored for Finance/AP/AR teams."
+],
+"recommended_agenda": [
+"Objectives and Success Criteria",
+"Current Payment Flows and Challenges",
+"Solution Overview and Architecture Options",
+"Data Model, Mapping, and Reconciliation",
+"Security, Compliance, and Controls",
+"Implementation Plan, Timeline, and Risks",
+"Why Aziro and Case Studies",
+"Next Steps and Commercials"
+],
+"slides": [
+{
+"slide_no": 1,
+"title": "Integrated Payments in Acumatica: Vision and Outcomes",
+"purpose": "Set context and align on the outcomes of an embedded payment solution.",
+"key_bullets": [
+"Seamless AR/AP payment processing inside Acumatica",
+"Real-time sync of authorizations, captures, payouts, and fees",
+"Audit-ready reconciliation with reduced month-end effort"
+],
+"speaker_notes": "We will show how to embed secure payments in Acumatica to improve cash flow and reduce manual work, while keeping PCI scope minimal.",
+"slide_type": "constant_corporate"
+},
+{
+"slide_no": 2,
+"title": "Your Objectives and Success Metrics",
+"purpose": "Confirm goals and define measurable KPIs for the initiative.",
+"key_bullets": [
+"Reduce DSO and accelerate cash application",
+"Increase auto-apply rate to >90%",
+"Cut reconciliation time by 50%+",
+"Improve first-try payment success and reduce declines"
+],
+"speaker_notes": "We will finalize targets during discovery; these drive scope and prioritization.",
+"slide_type": "tailored_customer"
+},
+{
+"slide_no": 3,
+"title": "Current Challenges and Risks",
+"purpose": "Surface pain points to address with the integration.",
+"key_bullets": [
+"Manual keying between gateway and Acumatica",
+"Delayed status updates and posting mismatches",
+"Limited visibility into fees, disputes, and payouts"
+],
+"speaker_notes": "These are common issues we solve with event-driven syncs and standardized mappings.",
+"slide_type": "tailored_customer"
+},
+{
+"slide_no": 4,
+"title": "Solution Overview",
+"purpose": "Introduce the end-to-end approach and value pillars.",
+"key_bullets": [
+"API-first integration with provider webhooks",
+"Hosted/tokenized payment capture to minimize PCI scope",
+"Reconciliation accelerator for settlements, fees, and chargebacks"
+],
+"speaker_notes": "We will tailor the exact pattern to your provider and Acumatica version.",
+"slide_type": "tailored_customer"
+},
+{
+"slide_no": 5,
+"title": "Architecture Options",
+"purpose": "Compare integration patterns and trade-offs.",
+"key_bullets": [
+"Native Acumatica customization vs REST integration",
+"Middleware/iPaaS for orchestration and monitoring",
+"Provider-agnostic design to avoid lock-in"
+],
+"speaker_notes": "We recommend the lightest solution that meets scale and compliance needs.",
+"slide_type": "tailored_customer"
+},
+{
+"slide_no": 6,
+"title": "Data Flows and Object Mapping",
+"purpose": "Show how invoices, payments, payouts, and fees synchronize.",
+"key_bullets": [
+"Customer/vendor, invoice, payment, credit memo objects",
+"Idempotent keys, retries, and duplicate prevention",
+"Net vs gross settlement mapping to cash/clearing accounts"
+],
+"speaker_notes": "Accurate mapping is the backbone of reliable reconciliation and reporting.",
+"slide_type": "tailored_customer"
+},
+{
+"slide_no": 7,
+"title": "Security and Compliance by Design",
+"purpose": "Demonstrate how the solution minimizes risk and audit scope.",
+"key_bullets": [
+"Tokenization and hosted fields reduce PCI scope",
+"RBAC, MFA, and immutable audit logs in Acumatica",
+"Encrypted transport/storage and vendor attestations"
+],
+"speaker_notes": "We map controls to PCI and your internal audit requirements.",
+"slide_type": "tailored_customer"
+},
+{
+"slide_no": 8,
+"title": "Reconciliation and Reporting",
+"purpose": "Explain daily funding, fees, chargebacks, and close process.",
+"key_bullets": [
+"Webhook + scheduled payout ingestion",
+"Automated matching and exception queues",
+"Dashboards: DSO, declines, dispute rates"
+],
+"speaker_notes": "Our accelerator reduces manual effort and supports faster month-end close.",
+"slide_type": "tailored_customer"
+},
+{
+"slide_no": 9,
+"title": "Implementation Plan and Timeline",
+"purpose": "Outline phased delivery with clear milestones.",
+"key_bullets": [
+"Phase 0: Discovery and design",
+"Phase 1: AR payments + basic reconciliation",
+"Phase 2: AP ACH + advanced reporting",
+"Hypercare, handover, and optimization"
+],
+"speaker_notes": "Phased approach delivers value early and reduces go-live risk.",
+"slide_type": "tailored_customer"
+},
+{
+"slide_no": 10,
+"title": "Why Aziro",
+"purpose": "Show credibility and fit for this work.",
+"key_bullets": [
+"Acumatica integration expertise",
+"Payments domain and PCI experience",
+"Operational excellence and observability"
+],
+"speaker_notes": "We bring reusable patterns that shorten timelines and reduce risk.",
+"slide_type": "constant_corporate"
+},
+{
+"slide_no": 11,
+"title": "Use Case: AR Customer Payments",
+"purpose": "Illustrate AR flow from authorization to reconciliation.",
+"key_bullets": [
+"Capture payments from invoice/sales order screens",
+"Auto-apply to invoices and update status in real time",
+"Ingest settlements and fees for GL posting"
+],
+"speaker_notes": "This use case improves cash application speed and accuracy.",
+"slide_type": "use_case"
+},
+{
+"slide_no": 12,
+"title": "Use Case: AP Vendor ACH Runs",
+"purpose": "Demonstrate AP payment automation and status sync.",
+"key_bullets": [
+"Initiate ACH batches from Acumatica pay runs",
+"Track acknowledgements/returns via webhooks",
+"Reconcile payouts and bank statements"
+],
+"speaker_notes": "Reduces manual follow-up and provides clear cash position.",
+"slide_type": "use_case"
+},
+{
+"slide_no": 13,
+"title": "Risks and Mitigations",
+"purpose": "Proactively address key delivery and technical risks.",
+"key_bullets": [
+"Webhook reliability → retries and DLQs",
+"Provider limits → rate-aware batching",
+"Change fatigue → training and hypercare"
+],
+"speaker_notes": "We build reliability into the architecture and support model.",
+"slide_type": "tailored_customer"
+},
+{
+"slide_no": 14,
+"title": "Next Steps and Commercials",
+"purpose": "Align on path forward and engagement model.",
+"key_bullets": [
+"Schedule discovery workshops",
+"Confirm provider sandbox access",
+"Finalize scope, timeline, and commercials"
+],
+"speaker_notes": "We can mobilize quickly once sandbox and stakeholders are confirmed.",
+"slide_type": "closing"
+}
+],
+"use_cases": [
+{
+"title": "AR Customer Payments with Real-Time Sync and Reconciliation",
+"customer_problem": "AR teams manually key payments from a gateway into Acumatica, causing delays, mismatches, and slow cash application.",
+"aziro_solution": "Embed tokenized/hosted payment capture in Acumatica AR screens, use provider webhooks and idempotent APIs to auto-apply receipts, and ingest settlements/fees to GL via a reconciliation accelerator.",
+"business_value": "Faster DSO, fewer posting errors, reduced manual effort, and audit-ready reconciliation.",
+"why_relevant_here": "Directly addresses the need for seamless payment processing and reliable data synchronization with Acumatica."
+},
+{
+"title": "AP Vendor ACH Automation with Status Visibility",
+"customer_problem": "AP runs ACH outside Acumatica with limited status feedback, leading to blind spots on returns and manual reconciliations.",
+"aziro_solution": "Trigger ACH batches from Acumatica, receive acknowledgements/returns via secure webhooks, and auto-reconcile payouts to bank statements with exception queues.",
+"business_value": "Improved cash control, fewer AP errors, and accelerated close.",
+"why_relevant_here": "Expands integration beyond AR to cover end-to-end payment workflows within ERP."
+},
+{
+"title": "Recurring Billing and Autopay for Subscriptions",
+"customer_problem": "Manual recurring charges and renewals create churn risk and inconsistent revenue recognition.",
+"aziro_solution": "Leverage provider vault tokens to schedule autopay runs, sync attempts and outcomes to Acumatica, and manage retries/notifications automatically.",
+"business_value": "Predictable cash collection, lower involuntary churn, and less back-office work.",
+"why_relevant_here": "Common extension once core AR payments are live; uses the same integration and reconciliation patterns."
+}
+]
+}
+}

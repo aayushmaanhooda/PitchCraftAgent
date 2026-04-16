@@ -1,0 +1,358 @@
+{
+  "Functional": [
+    {
+      "question": "What specific manual processes are currently in place for handling customer and vendor payments?",
+      "why_it_matters": "Understanding current processes helps to identify inefficiencies and areas for automation.",
+      "priority": "High",
+      "risk_if_unanswered": "Missing specific manual processes may lead to incomplete automation recommendations."
+    },
+    {
+      "question": "How do you currently track and manage failed transactions or payment discrepancies?",
+      "why_it_matters": "Identifying how discrepancies are managed can inform better integration practices.",
+      "priority": "High",
+      "risk_if_unanswered": "Inefficiencies in tracking may continue if not addressed in the new solution."
+    },
+    {
+      "question": "What payment methods do you currently accept, and what others are you considering for the future?",
+      "why_it_matters": "Understanding payment method requirements ensures the solution chosen can accommodate them.",
+      "priority": "High",
+      "risk_if_unanswered": "Not having a clear picture of payment methods can lead to gaps in functionality."
+    },
+    {
+      "question": "Can you describe your current reconciliation process and the main challenges faced?",
+      "why_it_matters": "Insights into the reconciliation process will identify necessary improvements in automation.",
+      "priority": "High",
+      "risk_if_unanswered": "Continuing with current reconciliation challenges may erode the efficiency sought."
+    },
+    {
+      "question": "What level of reporting visibility do you need regarding settlements, fees, and payment success rates?",
+      "why_it_matters": "This will guide the inclusion of reporting features in the solution.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Lack of visibility in reporting can result in poor decision-making."
+    },
+    {
+      "question": "What is the timeline for implementing a new payments solution?",
+      "why_it_matters": "Understanding the urgency helps prioritize features and resource allocation.",
+      "priority": "Medium",
+      "risk_if_unanswered": "A vague timeline can result in delayed implementation strategies."
+    },
+    {
+      "question": "Have you assessed potential return on investment for automating payment processes?",
+      "why_it_matters": "ROI analysis helps justify the costs and benefits of the new solution.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Not having a clear ROI can lead to misunderstanding stakeholder expectations."
+    },
+    {
+      "question": "What does your ideal payments integration look like in terms of user experience and functionality?",
+      "why_it_matters": "Knowing client aspirations will inform the design and user experience of the solution.",
+      "priority": "Low",
+      "risk_if_unanswered": "Not aligning to user expectations may impact adoption rates."
+    }
+  ],
+  "Technical": [
+    {
+      "question": "What existing technologies (APIs, middleware) are currently in use for payment processing?",
+      "why_it_matters": "Understanding existing technology helps determine compatibility and integration requirements.",
+      "priority": "High",
+      "risk_if_unanswered": "Ignoring current technologies may complicate integration."
+    },
+    {
+      "question": "What specific compliance requirements are relevant to your payment processing (e.g., PCI DSS)?",
+      "why_it_matters": "This ensures that the new solution adheres to essential legal and security standards.",
+      "priority": "High",
+      "risk_if_unanswered": "Lack of compliance can lead to serious legal and financial repercussions."
+    },
+    {
+      "question": "What kind of data security measures do you currently have in place for payment data?",
+      "why_it_matters": "Security measures are essential for safeguarding sensitive financial information.",
+      "priority": "High",
+      "risk_if_unanswered": "Inadequate security could expose the business to breaches and risks."
+    },
+    {
+      "question": "Are there any existing third-party payment gateways you are currently using or wish to continue using?",
+      "why_it_matters": "This will inform integration and partnership decisions moving forward.",
+      "priority": "High",
+      "risk_if_unanswered": "Failure to integrate existing gateways may lead to operational disruptions."
+    },
+    {
+      "question": "Do you have any specific IT constraints or resources that could affect the implementation process?",
+      "why_it_matters": "Understanding available resources helps in planning and execution of implementation.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Misjudging constraints can derail the project timeline."
+    },
+    {
+      "question": "What is your preferred method for integration: native within Acumatica or an external solution?",
+      "why_it_matters": "Clarifying preferences will steer the strategic direction of the solution development.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Not knowing the preferred method may lead to a mismatch in expectations and outcomes."
+    },
+    {
+      "question": "What is your approach to managing updates and changes in payment processing technology?",
+      "why_it_matters": "This determines how adaptable and future-proof the new solution needs to be.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Ignoring the need for adaptability may hinder long-term effectiveness."
+    },
+    {
+      "question": "What potential future payment methods are you considering, beyond the current scope?",
+      "why_it_matters": "Identifying future needs helps in building a scalable solution.",
+      "priority": "Low",
+      "risk_if_unanswered": "Neglecting future integration could limit growth opportunities."
+    },
+    {
+      "question": "How do you envision your payment reporting capabilities post-integration?",
+      "why_it_matters": "Envisioning future reporting needs guides the design and analytics capabilities.",
+      "priority": "Low",
+      "risk_if_unanswered": "Lack of foresight in reporting can hamper business insights and decision-making."
+    }
+  ],
+  "Design_UX": [
+    {
+      "question": "What user roles will interact with the payment system, and what tasks will they perform?",
+      "why_it_matters": "Understanding user roles enables designing specific interfaces and workflows catered to each.",
+      "priority": "High",
+      "risk_if_unanswered": "Neglecting user roles may lead to complex and ineffective interfaces."
+    },
+    {
+      "question": "Can you describe any specific pain points users currently experience with manual payment processes?",
+      "why_it_matters": "Addressing pain points ensures the solution enhances user satisfaction and productivity.",
+      "priority": "High",
+      "risk_if_unanswered": "Ignoring user pain can result in resistance to using the new solution."
+    },
+    {
+      "question": "What level of training will users need to effectively use the new payment system?",
+      "why_it_matters": "Identifying training needs helps in planning user adoption strategies.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Underestimating training requirements may lead to user frustration and low adoption."
+    },
+    {
+      "question": "Are there any particular user interface features that you wish to include in the new system?",
+      "why_it_matters": "Gathering desired features ensures the user experience aligns with client expectations.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Missing desired features can result in a solution that feels outdated or inefficient."
+    },
+    {
+      "question": "How important is mobile accessibility for your payment operations?",
+      "why_it_matters": "Understanding the need for mobile access influences development focus and capabilities.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Neglecting mobile access can limit usability and operational flexibility."
+    },
+    {
+      "question": "What features would enhance your customer experience when processing payments?",
+      "why_it_matters": "Enhancing customer experience can improve satisfaction and transaction volume.",
+      "priority": "Low",
+      "risk_if_unanswered": "Lack of attention to customer experience may lead to decreased satisfaction."
+    },
+    {
+      "question": "How do you prefer feedback loops to be integrated into the payment process?",
+      "why_it_matters": "Feedback integration helps with continuous improvement in processes and interfaces.",
+      "priority": "Low",
+      "risk_if_unanswered": "Neglecting feedback could hamper future iterations and enhancements."
+    },
+    {
+      "question": "What does a successful integration look like for your users?",
+      "why_it_matters": "Defining success criteria enables alignment on goals and objectives.",
+      "priority": "Low",
+      "risk_if_unanswered": "Lack of clear success indicators might prevent achieving the desired outcomes."
+    }
+  ],
+  "Data": [
+    {
+      "question": "What are your current data formats and storage solutions for payment information?",
+      "why_it_matters": "Understanding the current data environment helps in planning integration and migration strategies.",
+      "priority": "High",
+      "risk_if_unanswered": "Not addressing current formats may lead to compatibility and migration issues."
+    },
+    {
+      "question": "How do you currently handle data migration during updates or changes in payment systems?",
+      "why_it_matters": "Insights into migration handling inform best practices for future integrations.",
+      "priority": "High",
+      "risk_if_unanswered": "Ignoring migration processes can result in data loss or integrity issues."
+    },
+    {
+      "question": "What specific reporting and analytics capabilities do you require post-integration?",
+      "why_it_matters": "Detailing reporting needs ensures the solution has accurate and actionable business insights.",
+      "priority": "High",
+      "risk_if_unanswered": "Inadequate analytics can hinder data-driven decisions."
+    },
+    {
+      "question": "How do you manage data privacy and ensure compliance with data protection regulations?",
+      "why_it_matters": "Understanding privacy management is vital for maintaining customer trust and legal compliance.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Neglecting privacy can expose the business to regulatory penalties."
+    },
+    {
+      "question": "What data input methods do you currently use (manual entry, imports, etc.)?",
+      "why_it_matters": "Identifying input methods helps drive automation improvements for better efficiency.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Not addressing input methods may leave manual processes intact."
+    },
+    {
+      "question": "Have you encountered any challenges with data accuracy in your payment records?",
+      "why_it_matters": "Understanding data accuracy issues will guide improvement areas in the new solution.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Ignoring accuracy issues can perpetuate problems in the new system."
+    },
+    {
+      "question": "What type of data reconciliation processes do you currently have in place?",
+      "why_it_matters": "Insights into reconciliation processes will help evaluate automation needs and efficiencies.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Not understanding reconciliation can lead to inefficiencies in financial reporting."
+    },
+    {
+      "question": "How important is real-time data access for your payment processing and reporting needs?",
+      "why_it_matters": "Identifying the need for real-time data access will inform system capabilities and architecture.",
+      "priority": "Low",
+      "risk_if_unanswered": "Neglecting real-time access may limit operational efficiency."
+    }
+  ],
+  "Security_Compliance": [
+    {
+      "question": "What compliance frameworks or regulations are you currently adhering to for payment processing?",
+      "why_it_matters": "This ensures the new solution aligns with required standards and avoids compliance issues.",
+      "priority": "High",
+      "risk_if_unanswered": "Not adhering to compliance could incur legal penalties."
+    },
+    {
+      "question": "What are your current practices for handling and storing sensitive payment information?",
+      "why_it_matters": "Understanding current practices ensures that the solution incorporates necessary security safeguards.",
+      "priority": "High",
+      "risk_if_unanswered": "Inadequate handling practices may lead to security breaches."
+    },
+    {
+      "question": "How often do you conduct security audits or assessments of your payment processing systems?",
+      "why_it_matters": "Regular audits are essential to maintaining compliance and security effectiveness.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Lack of regular assessments may expose the organization to potential risks."
+    },
+    {
+      "question": "What user access controls do you have in place for your payment systems?",
+      "why_it_matters": "Access controls are essential for protecting sensitive data and ensuring proper user actions.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Weak access may increase the risk of unauthorized access and data breaches."
+    },
+    {
+      "question": "How do you handle incidents of data breaches or fraud in your payment processes?",
+      "why_it_matters": "Incident handling procedures are critical for risk management and recovery.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Missing incident policies can lead to severe implications in breach situations."
+    },
+    {
+      "question": "What training do employees receive regarding payment security and compliance?",
+      "why_it_matters": "Employee training is vital in ensuring adherence to compliance and best practices.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Insufficient training can lead to gaps in compliance and security awareness."
+    },
+    {
+      "question": "What third-party payment processors are you using, and how do they ensure compliance?",
+      "why_it_matters": "This informs integration and compliance risk assessments related to partners and providers.",
+      "priority": "Low",
+      "risk_if_unanswered": "Neglecting third-party compliance could impact your organizational risks."
+    },
+    {
+      "question": "What are your plans to continuously monitor and adapt to changing compliance landscapes?",
+      "why_it_matters": "Adapting to changes is essential for ongoing compliance and risk management.",
+      "priority": "Low",
+      "risk_if_unanswered": "Failure to adapt may lead to future compliance challenges."
+    }
+  ],
+  "Delivery_Governance": [
+    {
+      "question": "Who are the primary stakeholders involved in the payment integration project?",
+      "why_it_matters": "Identifying stakeholders is crucial for collaboration and decision-making throughout the project.",
+      "priority": "High",
+      "risk_if_unanswered": "Not engaging stakeholders can lead to misalignment and lack of support."
+    },
+    {
+      "question": "What are the key milestones you envision for this payment integration project?",
+      "why_it_matters": "Establishing milestones helps in tracking progress and ensuring timely completion.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Lack of milestones can derail project timelines and deliverables."
+    },
+    {
+      "question": "What internal resources (personnel, technology) do you foresee utilizing during this integration?",
+      "why_it_matters": "Understanding resource availability aids in project planning and execution.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Misjudging resources may lead to delays and inefficiencies."
+    },
+    {
+      "question": "How will success be measured for the payment integration project?",
+      "why_it_matters": "Defining success criteria ensures clear goals and expectations are established from the start.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Unclear success metrics can lead to unfocused efforts and misalignment."
+    },
+    {
+      "question": "What level of support and collaboration will be expected from Aziro Solutions during the implementation?",
+      "why_it_matters": "Clarifying expectations enables a smoother partnership and effective problem-solving.",
+      "priority": "Low",
+      "risk_if_unanswered": "Misunderstanding support needs could delay resolution of issues."
+    },
+    {
+      "question": "Are there any potential risks associated with the project that you foresee?",
+      "why_it_matters": "Identifying potential risks at the outset helps in planning mitigation strategies early on.",
+      "priority": "Low",
+      "risk_if_unanswered": "Ignoring risks can lead to unforeseen complications during implementation."
+    },
+    {
+      "question": "What is your organizational approach to change management during this integration?",
+      "why_it_matters": "Understanding change management processes helps in anticipating user adoption challenges.",
+      "priority": "Low",
+      "risk_if_unanswered": "Poor change management could lead to user resistance and low adoption rates."
+    },
+    {
+      "question": "How do you plan to solicit feedback from users post-implementation?",
+      "why_it_matters": "Gathering feedback is essential for ensuring the system meets user needs and for future improvements.",
+      "priority": "Low",
+      "risk_if_unanswered": "Failure to gather feedback may lead to unresolved user issues."
+    }
+  ],
+  "Commercial_Assumptions": [
+    {
+      "question": "What is your estimated budget for the payment integration project?",
+      "why_it_matters": "Understanding the budget allows for proper planning and resource allocation.",
+      "priority": "High",
+      "risk_if_unanswered": "Unclear budget constraints may lead to overspending or resource misallocation."
+    },
+    {
+      "question": "What are your expectations regarding ongoing costs (e.g., subscription fees, transaction costs) after integration?",
+      "why_it_matters": "Ongoing cost considerations are vital for ensuring financial sustainability post-implementation.",
+      "priority": "High",
+      "risk_if_unanswered": "Missing ongoing cost insights could strain future budgets."
+    },
+    {
+      "question": "What are your primary goals for the implementation of a new payment solution?",
+      "why_it_matters": "Identifying goals ensures that the solution aligns with your overall business objectives.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Lack of clear goals can lead to a solution that fails to meet expectations."
+    },
+    {
+      "question": "Are there any financial incentives or metrics you aim to improve with this integration?",
+      "why_it_matters": "Understanding financial incentives helps focus on features that align with financial goals.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Neglecting financial metrics may lead to an irrelevant solution."
+    },
+    {
+      "question": "What constraints or limitations could affect your decision-making in this project?",
+      "why_it_matters": "Understanding constraints helps to navigate potential barriers to success.",
+      "priority": "Medium",
+      "risk_if_unanswered": "Failure to identify constraints can complicate the decision-making process."
+    },
+    {
+      "question": "Are there any key competitors whose solutions you admire, and what features do you find appealing?",
+      "why_it_matters": "Competitive analysis can provide insights into desired features and expectations.",
+      "priority": "Low",
+      "risk_if_unanswered": "Ignoring competitor features may result in a less competitive solution."
+    },
+    {
+      "question": "What checks or balances do you have in place for evaluating vendor proposals?",
+      "why_it_matters": "Understanding evaluation processes guides optimal engagement strategies and proposals.",
+      "priority": "Low",
+      "risk_if_unanswered": "Lack of evaluation criteria can lead to poor vendor selection."
+    },
+    {
+      "question": "How do you envision the return on investment (ROI) for the payment integration project?",
+      "why_it_matters": "Defining ROI expectations ensures that outcomes align with investment levels.",
+      "priority": "Low",
+      "risk_if_unanswered": "Missing ROI clarity may lead to misadjustments in project scope."
+    }
+  ]
+}
