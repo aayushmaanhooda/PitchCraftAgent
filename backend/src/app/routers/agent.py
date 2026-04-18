@@ -1,86 +1,89 @@
-import io
-import time
-from dataclasses import dataclass
-from uuid import uuid4
+from fastapi import APIRouter, Depends
+from sqlmodel import Session
 
-from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.responses import StreamingResponse
-
-from app.schemas.excel import GenerateExcelRequest, GenerateExcelResponse
-from schemas.tables import User
-from services.auth.auth_service import get_current_user
+from aws.s3 import generate_presigned_url, upload_bytes
+from core.db import get_session
 from pipeline.agents.excel_agent import (
     generate_excel_from_questionnaire,
     generate_questionnaire_from_rfp,
 )
-
-router = APIRouter(prefix="/agent")
-GENERATED_EXCEL_TTL_SECONDS = 15 * 60
-
-
-@dataclass(slots=True)
-class GeneratedExcelFile:
-    content: bytes
-    file_name: str
-    created_at: float
-
-
-_generated_excels: dict[str, GeneratedExcelFile] = {}
-
-
-def _purge_expired_generated_excels() -> None:
-    cutoff = time.time() - GENERATED_EXCEL_TTL_SECONDS
-    expired_ids = [
-        file_id
-        for file_id, generated_file in _generated_excels.items()
-        if generated_file.created_at < cutoff
-    ]
-    for file_id in expired_ids:
-        _generated_excels.pop(file_id, None)
+from pipeline.agents.ppt_agent import ppt_agent
+from pipeline.agents.ppt_agent.reserach_agent import run_research_agent
+from schemas.excel import GenerateExcelRequest, GenerateExcelResponse
+from schemas.ppt import GeneratePPTRequest, GeneratePPTResponse
+from schemas.tables import User
+from services.auth.auth_service import get_current_user
+from services.customer import (
+    get_customer_owned,
+    set_excel_key,
+    set_ppt_key,
+    set_questionnaire_json,
+    set_sales_ppt_json,
+)
 
 
-def _store_generated_excel(content: bytes, file_name: str) -> str:
-    _purge_expired_generated_excels()
-    file_id = uuid4().hex
-    _generated_excels[file_id] = GeneratedExcelFile(
-        content=content,
-        file_name=file_name,
-        created_at=time.time(),
-    )
-    return file_id
+router = APIRouter(prefix="/agent", tags=["agent"])
+
+_XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+_PPTX_MIME = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+_PRESIGN_TTL = 15 * 60
 
 
-@router.get("/generated-excel/{file_id}", name="download_generated_excel")
-async def download_generated_excel(file_id: str):
-    _purge_expired_generated_excels()
-    generated_file = _generated_excels.get(file_id)
-    if generated_file is None:
-        raise HTTPException(status_code=404, detail="Generated Excel file not found or expired.")
+def _excel_key(user_id: int, customer_id: int) -> str:
+    return f"customers/{user_id}/{customer_id}/questionnaire.xlsx"
 
-    return StreamingResponse(
-        io.BytesIO(generated_file.content),
-        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        headers={
-            "Cache-Control": "no-store",
-            "Content-Disposition": f'attachment; filename="{generated_file.file_name}"',
-        },
-    )
+
+def _ppt_key(user_id: int, customer_id: int) -> str:
+    return f"customers/{user_id}/{customer_id}/deck.pptx"
 
 
 @router.post("/generate-excel", response_model=GenerateExcelResponse)
-async def generate_excel(
+def generate_excel(
     body: GenerateExcelRequest,
-    request: Request,
-    _current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
 ) -> GenerateExcelResponse:
-    file_name = "questionnaire.xlsx"
+    customer = get_customer_owned(session, current_user.id, body.customer_id)
+
     questionnaire = generate_questionnaire_from_rfp(body.rfp_text)
     buf = generate_excel_from_questionnaire(questionnaire)
-    file_id = _store_generated_excel(buf.getvalue(), file_name=file_name)
+
+    key = _excel_key(current_user.id, customer.id)
+    upload_bytes(buf.getvalue(), key, _XLSX_MIME)
+    set_excel_key(session, customer, key)
+    set_questionnaire_json(session, customer, questionnaire.model_dump())
 
     return GenerateExcelResponse(
-        file_id=file_id,
-        file_name=file_name,
-        download_url=str(request.url_for("download_generated_excel", file_id=file_id)),
+        customer_id=customer.id,
+        excel_s3_key=key,
+        excel_url=generate_presigned_url(key, expires_in=_PRESIGN_TTL),
         preview=questionnaire.model_dump(),
+    )
+
+
+@router.post("/generate-ppt", response_model=GeneratePPTResponse)
+def generate_ppt(
+    body: GeneratePPTRequest,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+) -> GeneratePPTResponse:
+    customer = get_customer_owned(session, current_user.id, body.customer_id)
+
+    envelope = run_research_agent(body.rfp_text)
+    sales_ppt = envelope.sales_ppt
+    pptx_bytes, slide_count = ppt_agent.run(
+        sales_ppt, design_name=body.design_name.value
+    )
+
+    key = _ppt_key(current_user.id, customer.id)
+    upload_bytes(pptx_bytes, key, _PPTX_MIME)
+    set_ppt_key(session, customer, key)
+    set_sales_ppt_json(session, customer, sales_ppt.model_dump())
+
+    return GeneratePPTResponse(
+        customer_id=customer.id,
+        ppt_s3_key=key,
+        ppt_url=generate_presigned_url(key, expires_in=_PRESIGN_TTL),
+        deck_title=sales_ppt.deck_title,
+        slide_count=slide_count,
     )

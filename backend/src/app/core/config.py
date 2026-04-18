@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     HF_TOKEN: str
     GEMINI_API_KEY: str
     OPENAI_API_KEY: str
-    CLAUDE_API_KEY: str
+    ANTHROPIC_API_KEY: str
     TAVILY_API_KEY: str
     NEON_CONNECTION_STRING: str
     JWT_SECRET: str
@@ -40,6 +40,13 @@ class Settings(BaseSettings):
     LANGSMITH_ENDPOINT:str = "https://api.smith.langchain.com"
     LANGSMITH_API_KEY: str
     LANGSMITH_PROJECT:str = "pitchCraft"
+
+    # aws
+    AWS_ACCESS_KEY_ID: str
+    AWS_SECRET_ACCESS_KEY: str
+    AWS_REGION: str = "us-east-1"
+    AWS_S3_BUCKET: str
+
 
 @lru_cache()
 def get_settings():

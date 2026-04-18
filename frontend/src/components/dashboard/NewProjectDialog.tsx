@@ -23,20 +23,33 @@ export function NewProjectDialog({ open, onOpenChange }: Props) {
   const { createProject } = useProjects()
   const navigate = useNavigate()
   const [name, setName] = useState("")
+  const [submitting, setSubmitting] = useState(false)
+  const [err, setErr] = useState<string | null>(null)
 
   const handleOpenChange = (next: boolean) => {
-    if (!next) setName("")
+    if (!next) {
+      setName("")
+      setErr(null)
+    }
     onOpenChange(next)
   }
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     const trimmed = name.trim()
     if (!trimmed) return
-    const project = createProject(trimmed)
-    setName("")
-    onOpenChange(false)
-    navigate(`/dashboard/projects/${project.id}`)
+    setSubmitting(true)
+    setErr(null)
+    try {
+      const project = await createProject(trimmed)
+      setName("")
+      onOpenChange(false)
+      navigate(`/dashboard/projects/${project.id}`)
+    } catch {
+      setErr("Failed to create customer. Please try again.")
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -59,16 +72,20 @@ export function NewProjectDialog({ open, onOpenChange }: Props) {
               onChange={(e) => setName(e.target.value)}
             />
           </div>
+          {err && (
+            <div className="text-xs text-red-400">{err}</div>
+          )}
           <DialogFooter>
             <Button
               type="button"
               variant="outline"
               onClick={() => handleOpenChange(false)}
+              disabled={submitting}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={!name.trim()}>
-              Create
+            <Button type="submit" disabled={!name.trim() || submitting}>
+              {submitting ? "Creating…" : "Create"}
             </Button>
           </DialogFooter>
         </form>

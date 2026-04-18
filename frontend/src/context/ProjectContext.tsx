@@ -1,66 +1,107 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useState,
   type ReactNode,
 } from "react"
+import { AxiosError } from "axios"
 
-export type Project = {
-  id: string
-  name: string
-  createdAt: number
-}
+import { customerApi, type Customer } from "@/api/customer"
+import { useAuth } from "@/context/AuthContext"
 
 type ProjectContextValue = {
-  projects: Project[]
-  getProject: (id: string) => Project | undefined
-  createProject: (name: string) => Project
-  deleteProject: (id: string) => void
+  projects: Customer[]
+  loading: boolean
+  error: string | null
+  getProject: (id: number) => Customer | undefined
+  refreshProject: (id: number) => Promise<Customer | null>
+  createProject: (name: string) => Promise<Customer>
+  deleteProject: (id: number) => Promise<void>
+  updateLocal: (customer: Customer) => void
 }
-
-// TODO: swap localStorage for backend fetch once /projects API exists.
-const STORAGE_KEY = "pitchcraft.projects"
 
 const ProjectContext = createContext<ProjectContextValue | null>(null)
 
-function readFromStorage(): Project[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed : []
-  } catch {
-    return []
-  }
-}
-
 export function ProjectProvider({ children }: { children: ReactNode }) {
-  const [projects, setProjects] = useState<Project[]>(() => readFromStorage())
+  const { user } = useAuth()
+  const [projects, setProjects] = useState<Customer[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(projects))
-  }, [projects])
-
-  const getProject = (id: string) => projects.find((p) => p.id === id)
-
-  const createProject = (name: string): Project => {
-    const project: Project = {
-      id: crypto.randomUUID(),
-      name: name.trim(),
-      createdAt: Date.now(),
+    if (!user) {
+      setProjects([])
+      return
     }
-    setProjects((prev) => [project, ...prev])
-    return project
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+    customerApi
+      .list()
+      .then((res) => {
+        if (!cancelled) setProjects(res.data)
+      })
+      .catch((e: AxiosError) => {
+        if (!cancelled)
+          setError(e.response?.statusText ?? "Failed to load customers")
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [user])
+
+  const getProject = (id: number) => projects.find((p) => p.id === id)
+
+  const refreshProject = useCallback(async (id: number) => {
+    try {
+      const res = await customerApi.get(id)
+      setProjects((prev) => {
+        const idx = prev.findIndex((p) => p.id === id)
+        if (idx === -1) return [res.data, ...prev]
+        const next = prev.slice()
+        next[idx] = res.data
+        return next
+      })
+      return res.data
+    } catch {
+      return null
+    }
+  }, [])
+
+  const createProject = async (name: string): Promise<Customer> => {
+    const res = await customerApi.create(name.trim())
+    setProjects((prev) => [res.data, ...prev])
+    return res.data
   }
 
-  const deleteProject = (id: string) => {
-    setProjects((prev) => prev.filter((project) => project.id !== id))
+  const deleteProject = async (id: number): Promise<void> => {
+    await customerApi.remove(id)
+    setProjects((prev) => prev.filter((p) => p.id !== id))
+  }
+
+  const updateLocal = (customer: Customer) => {
+    setProjects((prev) =>
+      prev.map((p) => (p.id === customer.id ? customer : p)),
+    )
   }
 
   return (
     <ProjectContext.Provider
-      value={{ projects, getProject, createProject, deleteProject }}
+      value={{
+        projects,
+        loading,
+        error,
+        getProject,
+        refreshProject,
+        createProject,
+        deleteProject,
+        updateLocal,
+      }}
     >
       {children}
     </ProjectContext.Provider>

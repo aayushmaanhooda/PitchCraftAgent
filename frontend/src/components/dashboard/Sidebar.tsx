@@ -1,12 +1,125 @@
-import { useState } from "react"
+import { useState, type CSSProperties } from "react"
 import { NavLink, useNavigate } from "react-router-dom"
-import { Plus, FolderOpen, LogOut } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import { NewProjectDialog } from "@/components/dashboard/NewProjectDialog"
+import { Icon } from "@/components/dashboard/Icon"
 import { useProjects } from "@/context/ProjectContext"
 import { useAuth } from "@/context/AuthContext"
-import { cn } from "@/lib/utils"
+
+const styles: Record<string, CSSProperties> = {
+  root: {
+    width: 240,
+    borderRight: "1px solid var(--pc-border)",
+    background: "var(--pc-panel)",
+    display: "flex",
+    flexDirection: "column",
+    flexShrink: 0,
+    height: "100%",
+  },
+  header: {
+    height: 56,
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    padding: "0 18px",
+    borderBottom: "1px solid var(--pc-border)",
+  },
+  logoText: { fontWeight: 600, fontSize: 14, letterSpacing: "-0.01em", color: "var(--pc-text)" },
+  body: { flex: 1, overflow: "auto", padding: 12 },
+  newBtn: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    width: "100%",
+    padding: "9px 12px",
+    background: "var(--pc-card)",
+    border: "1px solid var(--pc-border-strong)",
+    borderRadius: 8,
+    color: "var(--pc-text)",
+    fontSize: 13,
+    fontWeight: 500,
+    transition: "background 140ms",
+    cursor: "pointer",
+  },
+  section: {
+    marginTop: 18,
+    padding: "0 8px 6px",
+    fontSize: 10.5,
+    fontWeight: 600,
+    letterSpacing: "0.08em",
+    color: "var(--pc-text-3)",
+    textTransform: "uppercase",
+  },
+  footer: {
+    padding: 12,
+    borderTop: "1px solid var(--pc-border)",
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+  },
+  avatar: {
+    width: 28,
+    height: 28,
+    borderRadius: "50%",
+    background: "linear-gradient(135deg, #3b3b40, #1e1e22)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: 12,
+    fontWeight: 600,
+    color: "var(--pc-text)",
+    border: "1px solid var(--pc-border-strong)",
+  },
+  userBox: { flex: 1, minWidth: 0 },
+  userName: {
+    fontSize: 12.5,
+    fontWeight: 500,
+    color: "var(--pc-text)",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  },
+  userEmail: {
+    fontSize: 11,
+    color: "var(--pc-text-3)",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  },
+  logoutBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: 6,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "var(--pc-text-3)",
+    border: "1px solid transparent",
+    background: "transparent",
+    cursor: "pointer",
+  },
+}
+
+function itemStyle(active: boolean): CSSProperties {
+  return {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    width: "100%",
+    padding: "8px 10px",
+    borderRadius: 6,
+    background: active ? "rgba(255,255,255,0.055)" : "transparent",
+    color: active ? "var(--pc-text)" : "var(--pc-text-2)",
+    fontSize: 13,
+    fontWeight: active ? 500 : 400,
+    textAlign: "left",
+    marginBottom: 2,
+    cursor: "pointer",
+    border: "1px solid transparent",
+    transition: "background 120ms",
+    textDecoration: "none",
+  }
+}
 
 export function Sidebar() {
   const { projects } = useProjects()
@@ -19,75 +132,89 @@ export function Sidebar() {
     navigate("/")
   }
 
+  const initial = (user?.username ?? "U").charAt(0).toUpperCase()
+
   return (
-    <aside className="hidden md:flex w-64 shrink-0 flex-col bg-card/50">
-      {/* New project button */}
-      <div className="p-4">
-        <Button
-          className="w-full justify-start gap-2"
-          variant="outline"
-          onClick={() => setDialogOpen(true)}
-        >
-          <Plus className="h-4 w-4" />
-          New project
-        </Button>
+    <aside style={styles.root}>
+      <div style={styles.header}>
+        <span style={{ color: "var(--pc-text)" }}><Icon name="logo" size={18} /></span>
+        <span style={styles.logoText}>PitchCraft</span>
       </div>
 
-      {/* Projects list */}
-      <div className="flex flex-1 min-h-0 flex-col overflow-y-auto px-3">
-        <h2 className="px-2 pb-2 text-[11px] font-semibold tracking-widest text-muted-foreground/60 uppercase">
-          Your Projects
-        </h2>
+      <div style={styles.body}>
+        <button
+          type="button"
+          style={styles.newBtn}
+          onClick={() => setDialogOpen(true)}
+          onMouseEnter={(e) => { e.currentTarget.style.background = "var(--pc-card-2)" }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "var(--pc-card)" }}
+        >
+          <Icon name="plus" size={14} />
+          New project
+        </button>
+
+        <div style={styles.section}>Your customers</div>
         {projects.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 px-2 py-8 text-center">
-            <FolderOpen className="h-8 w-8 text-muted-foreground/30" />
-            <p className="text-sm text-muted-foreground/50">
-              No projects yet
-            </p>
+          <div style={{ padding: "20px 10px", textAlign: "center", color: "var(--pc-text-3)", fontSize: 12 }}>
+            No customers yet
           </div>
         ) : (
-          <ul className="flex flex-col gap-0.5">
-            {projects.map((p) => (
-              <li key={p.id}>
-                <NavLink
-                  to={`/dashboard/projects/${p.id}`}
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-2 truncate rounded-lg px-3 py-2.5 text-sm transition-colors",
-                      isActive
-                        ? "bg-accent text-accent-foreground font-medium"
-                        : "text-muted-foreground hover:bg-accent/40 hover:text-foreground"
-                    )
-                  }
-                >
-                  <span className="truncate">{p.name}</span>
-                </NavLink>
-              </li>
-            ))}
-          </ul>
+          projects.map((p) => (
+            <NavLink
+              key={p.id}
+              to={`/dashboard/projects/${p.id}`}
+              style={({ isActive }) => itemStyle(isActive)}
+            >
+              {({ isActive }) => (
+                <>
+                  <div
+                    style={{
+                      width: 6,
+                      height: 6,
+                      borderRadius: 3,
+                      background: isActive ? "var(--pc-accent-2)" : "var(--pc-text-3)",
+                      flexShrink: 0,
+                    }}
+                  />
+                  <span
+                    style={{
+                      flex: 1,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {p.customer_name}
+                  </span>
+                </>
+              )}
+            </NavLink>
+          ))
         )}
       </div>
 
-      {/* User info & logout at bottom */}
-      <div className="border-t border-border/40 p-3">
-        <div className="flex items-center gap-3 rounded-lg px-3 py-2.5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold uppercase">
-            {user?.username?.charAt(0) ?? "U"}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="truncate text-sm font-medium">{user?.username}</p>
-            <p className="truncate text-[11px] text-muted-foreground/60">
-              {user?.email}
-            </p>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="shrink-0 rounded-md p-1.5 text-muted-foreground/60 hover:bg-accent hover:text-foreground transition-colors"
-            title="Log out"
-          >
-            <LogOut className="h-4 w-4" />
-          </button>
+      <div style={styles.footer}>
+        <div style={styles.avatar}>{initial}</div>
+        <div style={styles.userBox}>
+          <div style={styles.userName}>{user?.username}</div>
+          <div style={styles.userEmail}>{user?.email}</div>
         </div>
+        <button
+          type="button"
+          style={styles.logoutBtn}
+          title="Sign out"
+          onClick={handleLogout}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "rgba(255,255,255,0.04)"
+            e.currentTarget.style.color = "var(--pc-text)"
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "transparent"
+            e.currentTarget.style.color = "var(--pc-text-3)"
+          }}
+        >
+          <Icon name="logout" size={14} />
+        </button>
       </div>
 
       <NewProjectDialog open={dialogOpen} onOpenChange={setDialogOpen} />

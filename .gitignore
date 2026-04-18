@@ -1,3 +1,7 @@
 .venv
 .env
 creds/
+__pycache__
+graphify-out
+.github
+.claude

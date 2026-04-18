@@ -31,6 +31,22 @@
   --ring: hsl(0 0% 80%);
   --radius: 0.625rem;
   --hero-subtitle: hsl(210 17% 95%);
+
+  /* PitchCraft dashboard design tokens (purple accent) */
+  --pc-bg: #0a0a0a;
+  --pc-panel: #111113;
+  --pc-card: #151518;
+  --pc-card-2: #1a1a1e;
+  --pc-border: rgba(255, 255, 255, 0.07);
+  --pc-border-strong: rgba(255, 255, 255, 0.12);
+  --pc-text: #ededed;
+  --pc-text-2: #a1a1a6;
+  --pc-text-3: #6e6e76;
+  --pc-accent: #8b5cf6;
+  --pc-accent-2: #a78bfa;
+  --pc-accent-dim: rgba(139, 92, 246, 0.14);
+  --pc-green: #3ecf8e;
+  --pc-blue: #8ab4ff;
 }
 
 .dark {

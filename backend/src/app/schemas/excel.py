@@ -8,13 +8,14 @@ from pydantic import BaseModel, Field
 
 
 class GenerateExcelRequest(BaseModel):
+    customer_id: int
     rfp_text: str
 
 
 class GenerateExcelResponse(BaseModel):
-    file_id: str
-    file_name: str
-    download_url: str
+    customer_id: int
+    excel_s3_key: str
+    excel_url: str
     preview: "QuestionnaireOutput"
 
 
@@ -27,7 +28,7 @@ class Priority(str, Enum):
 # MODEL
 class Question(BaseModel):
     """A single discovery question for the client."""
- 
+
     question: str = Field(
         ..., description="The question text to ask the client."
     )
@@ -40,18 +41,18 @@ class Question(BaseModel):
     risk_if_unanswered: str = Field(
         ..., description="What goes wrong if this isn't answered."
     )
- 
+
 
 # ROOT SCHEMA
 class QuestionnaireOutput(BaseModel):
     """
     The complete JSON that the LLM must produce.
     The LangGraph Excel Flow reads this to generate the .xlsx file.
- 
+
     Each category must have 5-10 questions.
     Categories are fixed — every RFP gets all seven.
     """
- 
+
     Functional: list[Question] = Field(
         ...,
         min_length=5,
@@ -94,4 +95,4 @@ class QuestionnaireOutput(BaseModel):
         max_length=15,
         description="Commercial, pricing, and contractual questions. 5-15 required.",
     )
- 
+

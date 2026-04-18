@@ -10,13 +10,32 @@ export interface PreviewQuestion {
 export type QuestionnairePreview = Record<string, PreviewQuestion[]>
 
 export interface GenerateExcelResponse {
-  file_id: string
-  file_name: string
-  download_url: string
+  customer_id: number
+  excel_s3_key: string
+  excel_url: string
   preview: QuestionnairePreview
 }
 
+export type DesignName = "corporate_blue" | "warm_earth"
+
+export interface GeneratePPTResponse {
+  customer_id: number
+  ppt_s3_key: string
+  ppt_url: string
+  deck_title: string
+  slide_count: number
+}
+
 export const agentApi = {
-  generateExcel: (rfpText: string) =>
-    api.post<GenerateExcelResponse>("/agent/generate-excel", { rfp_text: rfpText }),
+  generateExcel: (customerId: number, rfpText: string) =>
+    api.post<GenerateExcelResponse>("/agent/generate-excel", {
+      customer_id: customerId,
+      rfp_text: rfpText,
+    }),
+  generatePPT: (customerId: number, rfpText: string, designName: DesignName) =>
+    api.post<GeneratePPTResponse>("/agent/generate-ppt", {
+      customer_id: customerId,
+      rfp_text: rfpText,
+      design_name: designName,
+    }),
 }

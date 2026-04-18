@@ -3,12 +3,21 @@ import { useAuth } from "@/context/AuthContext"
 export default function DashboardHome() {
   const { user } = useAuth()
   return (
-    <div className="h-full overflow-y-auto px-6 md:px-10 py-10 md:py-16">
-      <h1 className="text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight">
+    <div
+      style={{
+        flex: 1,
+        padding: "64px 40px",
+        color: "var(--pc-text)",
+        overflow: "auto",
+      }}
+    >
+      <h1 style={{ fontSize: 40, fontWeight: 500, letterSpacing: "-0.02em" }}>
         Hello,{" "}
-        <span className="font-serif italic font-normal">{user?.username}</span>
+        <span style={{ fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontWeight: 400 }}>
+          {user?.username}
+        </span>
       </h1>
-      <p className="mt-4 text-muted-foreground text-base md:text-lg">
+      <p style={{ marginTop: 16, color: "var(--pc-text-2)", fontSize: 15 }}>
         Select a project from the sidebar, or create a new one to get started.
       </p>
     </div>

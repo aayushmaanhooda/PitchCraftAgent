@@ -9,7 +9,7 @@ from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from core.db import create_db_and_tables
-from routers import auth, agent
+from routers import auth, agent, customer
 
 
 @asynccontextmanager
@@ -31,6 +31,7 @@ app.add_middleware(
 v1 = APIRouter(prefix="/v1")
 v1.include_router(auth.router)
 v1.include_router(agent.router)
+v1.include_router(customer.router)
 
 app.include_router(v1)
 
