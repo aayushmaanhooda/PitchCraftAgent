@@ -24,6 +24,11 @@ from services.auth.jwt import create_access_token
 settings = get_settings()
 OAUTH_STATE_COOKIE = "google_oauth_state"
 
+# Cross-site cookies (prod: frontend on vercel, backend on fastapicloud) need
+# SameSite=None + Secure. In dev (http), browsers reject SameSite=None, so we
+# fall back to "lax". Driven by COOKIE_SECURE so the two settings stay in sync.
+_COOKIE_SAMESITE: str = "none" if settings.COOKIE_SECURE else "lax"
+
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
@@ -35,7 +40,7 @@ def _set_auth_cookie(response: Response, user_id: int) -> None:
         max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
         httponly=True,
         secure=settings.COOKIE_SECURE,
-        samesite="lax",
+        samesite=_COOKIE_SAMESITE,
         path="/",
     )
 
@@ -86,7 +91,7 @@ def google_login() -> RedirectResponse:
         max_age=600,
         httponly=True,
         secure=settings.COOKIE_SECURE,
-        samesite="lax",
+        samesite=_COOKIE_SAMESITE,
         path="/",
     )
     return response
@@ -122,7 +127,7 @@ async def google_callback(
         max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
         httponly=True,
         secure=settings.COOKIE_SECURE,
-        samesite="lax",
+        samesite=_COOKIE_SAMESITE,
         path="/",
     )
     redirect.delete_cookie(OAUTH_STATE_COOKIE, path="/")
