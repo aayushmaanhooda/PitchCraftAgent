@@ -1,0 +1,7 @@
+The most interesting question this graph can answer: Why 
+  does Design bridge the PPT core to three separate theme    
+  communities (Base, Warm Earth, Corporate Blue) AND the 
+  Slide Layout Scripts? This is the central                  
+  design-abstraction in your pitch pipeline — answering it 
+  reveals how themed layouts actually get picked at render
+  time. Want me to trace it?

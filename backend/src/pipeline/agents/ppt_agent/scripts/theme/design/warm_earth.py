@@ -9,7 +9,7 @@ from pathlib import Path
 
 from pipeline.agents.ppt_agent.scripts.theme.base_design import Design
 
-_ASSETS = Path(__file__).resolve().parents[4] / "agent" / "assets"
+_ASSETS = Path(__file__).resolve().parents[3] / "assets"
 
 DESIGN = Design(
     # colours

@@ -3,7 +3,10 @@
   "dashboard": "chart-line",
   "exclamation-triangle": "triangle-exclamation",
   "file-chart-line": "chart-line",
+  "globe-americas": "globe",
   "mobile-alt": "mobile-screen",
+  "shopping-cart": "money-bill",
   "sync": "arrows-rotate",
+  "target": "bullseye",
   "users-cog": "gears"
 }
